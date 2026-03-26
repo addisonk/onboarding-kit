@@ -1,8 +1,22 @@
 {
   "name": "onboarding-kit",
   "version": "0.0.1",
+  "description": "Drop-in onboarding flows for Next.js + shadcn/ui",
   "type": "module",
   "private": true,
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/addisonk/onboarding-kit.git"
+  },
+  "homepage": "https://the-onboarding-kit.vercel.app",
+  "keywords": [
+    "onboarding",
+    "nextjs",
+    "shadcn",
+    "react",
+    "tailwindcss"
+  ],
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",

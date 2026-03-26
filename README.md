@@ -4,9 +4,18 @@ Drop-in onboarding flows for Next.js + shadcn/ui. Define steps as data, get stru
 
 [Live Demo](https://the-onboarding-kit.vercel.app)
 
+## Prerequisites
+
+- Next.js 15+ (App Router)
+- Tailwind CSS v4
+- [shadcn/ui](https://ui.shadcn.com) installed (`npx shadcn init`)
+- [Framer Motion](https://motion.dev) and [Zod](https://zod.dev)
+
 ## Usage
 
-Copy `components/survey` into your project.
+1. Copy `components/survey/` into your project
+2. Install the required shadcn components: `npx shadcn add button input textarea slider progress card alert`
+3. Import and use:
 
 ```tsx
 import { useState } from "react";
