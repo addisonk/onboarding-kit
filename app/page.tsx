@@ -11,6 +11,7 @@ interface DemoAttributes {
   _intro?: string;
   radioCards?: string;
   radioButtons?: string;
+  longList?: string;
   multiSelect?: string[];
   textInput?: string;
   textareaInput?: string;
@@ -32,19 +33,27 @@ const questions: QuestionConfig<DemoAttributes>[] = [
     type: "info",
   },
 
-  // 2. Radio cards — grid of visual options with emoji/icons
+  // 2. Long radio list — tests scrolling behavior (moved to front for testing)
   {
-    id: "radioCards",
-    title: "Radio Cards",
+    id: "longList",
+    title: "What industry are you in?",
     description:
-      'type: "radio" with variant: "card". A 2-column grid with emoji, label, and description. Selecting auto-advances after a brief animation.',
+      "A long list of options to demonstrate scrolling. The logo and progress bar stay sticky at the top.",
     type: "radio",
-    variant: "card",
+    variant: "button",
     options: [
-      { value: "minimal", label: "Minimal", emoji: "✨", description: "Clean & simple" },
-      { value: "playful", label: "Playful", emoji: "🎨", description: "Fun & colorful" },
-      { value: "corporate", label: "Corporate", emoji: "💼", description: "Professional tone" },
-      { value: "technical", label: "Technical", emoji: "⚙️", description: "Developer-focused" },
+      { value: "tech", label: "Technology" },
+      { value: "healthcare", label: "Healthcare" },
+      { value: "finance", label: "Finance & Banking" },
+      { value: "education", label: "Education" },
+      { value: "ecommerce", label: "E-commerce & Retail" },
+      { value: "media", label: "Media & Entertainment" },
+      { value: "real-estate", label: "Real Estate" },
+      { value: "manufacturing", label: "Manufacturing" },
+      { value: "legal", label: "Legal Services" },
+      { value: "nonprofit", label: "Non-profit" },
+      { value: "government", label: "Government" },
+      { value: "other", label: "Other" },
     ],
   },
 
@@ -199,7 +208,7 @@ export default function Home() {
   }
 
   return (
-    <div className="h-svh">
+    <div className="h-svh overflow-y-auto">
       <Survey
         questions={questions}
         attributes={attributes}
@@ -212,13 +221,13 @@ export default function Home() {
         logo={<span className="text-lg font-bold tracking-tight">Onboarding Kit</span>}
         rightImage="/right-panel.png"
         hideRightPanel={hidePanel}
-        className="h-full"
+        className=""
       />
 
       {/* Layout toggle — top right, over the panel */}
       <button
         onClick={() => setHidePanel((p) => !p)}
-        className="fixed right-8 top-8 z-20 hidden cursor-pointer rounded-lg bg-black/50 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-sm transition-colors hover:bg-black/70 md:block"
+        className="fixed right-10 top-8 z-20 hidden cursor-pointer rounded-lg bg-black/50 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-sm transition-colors hover:bg-black/70 md:block"
       >
         {hidePanel ? "Show panel" : "Hide panel"}
       </button>

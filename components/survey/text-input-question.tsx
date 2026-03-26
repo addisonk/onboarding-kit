@@ -111,7 +111,7 @@ export function TextInputQuestion({
           onChange={(e) => onChange(e.target.value)}
           placeholder={displayPlaceholder}
           className={cn(
-            "h-12 text-lg",
+            "h-12 text-base",
             hasValue && "pr-12",
             type === "number" &&
               "[appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"

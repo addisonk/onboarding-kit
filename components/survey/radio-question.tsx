@@ -189,8 +189,8 @@ export function RadioQuestion({
                   {option.emoji}
                 </span>
               ) : null}
-              <span className="flex flex-col gap-0.5">
-                <span>{option.label}</span>
+              <span className="flex flex-col gap-1">
+                <span className="font-medium">{option.label}</span>
                 {option.description && (
                   <span className="text-sm leading-snug text-muted-foreground">
                     {option.description}

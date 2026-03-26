@@ -10,7 +10,6 @@ import { QuestionRenderer } from "./question-renderer";
 import { useCurrentQuestion } from "./hooks/use-current-question";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
 import type { QuestionConfig } from "./types";
 
 export interface SurveyProps<A extends Record<string, any>> {
@@ -158,15 +157,42 @@ export function Survey<A extends Record<string, any>>({
       : 0;
 
   return (
-    <SurveyShell className={className} rightContent={resolvedRightContent} logo={logo} logoUrl={logoUrl}>
-      <div ref={containerRef} className="max-w-lg">
-        {/* Progress bar */}
-        {showProgress && totalQuestions !== undefined && (
-          <div className="mb-4">
-            <Progress value={progressPercent} className="h-1.5 w-24" />
+    <SurveyShell
+      className={className}
+      rightContent={resolvedRightContent}
+      logo={logo}
+      logoUrl={logoUrl}
+      showProgress={showProgress}
+      progressPercent={progressPercent}
+      actions={
+        <div className="max-w-lg">
+          {/* Desktop */}
+          <div className="hidden items-center justify-between md:flex">
+            <Button variant="outline" size="icon" className={cn("min-h-10 min-w-10", showBack ? "" : "invisible")} onClick={goToPrevious} aria-label="Go back">
+              <ArrowLeft />
+            </Button>
+            <Button size="lg" onClick={goToNext} className={showNext ? "" : "invisible"}>
+              Continue
+            </Button>
           </div>
-        )}
-
+          {/* Mobile */}
+          {!hideContinueButton && (
+            <div className="flex gap-3 md:hidden">
+              {showBack && (
+                <Button variant="outline" size="lg" className="flex-1" onClick={goToPrevious} aria-label="Go back">
+                  <ArrowLeft />
+                  Back
+                </Button>
+              )}
+              <Button size="lg" className="flex-1" onClick={goToNext} disabled={!showNext}>
+                Continue
+              </Button>
+            </div>
+          )}
+        </div>
+      }
+    >
+      <div ref={containerRef} className="max-w-lg py-6">
         {/* Question — fade + subtle slide on transition */}
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
@@ -202,32 +228,7 @@ export function Survey<A extends Record<string, any>>({
             </SurveyQuestion>
           </motion.div>
         </AnimatePresence>
-
-        {/* Back + Continue — desktop (always rendered to reserve space) */}
-        <div className="mt-8 hidden items-center justify-between md:flex">
-          <Button variant="outline" size="icon" className={cn("min-h-10 min-w-10", showBack ? "" : "invisible")} onClick={goToPrevious} aria-label="Go back">
-            <ArrowLeft />
-          </Button>
-          <Button size="lg" onClick={goToNext} className={showNext ? "" : "invisible"}>
-            Continue
-          </Button>
-        </div>
       </div>
-
-      {/* Back + Continue — mobile fixed bottom, full width */}
-      {!hideContinueButton && (
-        <div className="fixed inset-x-0 bottom-0 z-10 flex gap-3 bg-gradient-to-t from-background via-background to-transparent px-8 pb-8 pt-6 md:hidden">
-          {showBack && (
-            <Button variant="outline" size="lg" className="flex-1" onClick={goToPrevious} aria-label="Go back">
-              <ArrowLeft />
-              Back
-            </Button>
-          )}
-          <Button size="lg" className="flex-1" onClick={goToNext} disabled={!showNext}>
-            Continue
-          </Button>
-        </div>
-      )}
     </SurveyShell>
   );
 }
