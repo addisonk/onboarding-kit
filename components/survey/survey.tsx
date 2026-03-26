@@ -65,9 +65,17 @@ export function Survey<A extends Record<string, any>>({
 
   useEffect(() => {
     if (currentQuestion) {
-      setTempAnswer(
-        currentQuestion.type === "info" ? true : (attributes as any)[currentQuestion.id]
-      );
+      const existing = (attributes as any)[currentQuestion.id];
+      if (currentQuestion.type === "info") {
+        setTempAnswer(true);
+      } else if (currentQuestion.type === "slider" && existing === undefined) {
+        const sp = currentQuestion.sliderProps;
+        const min = sp?.min ?? 0;
+        const max = sp?.max ?? 10;
+        setTempAnswer(Math.round((min + max) / 2));
+      } else {
+        setTempAnswer(existing);
+      }
       setValidationError("");
     }
   }, [currentQuestion, attributes]);

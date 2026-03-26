@@ -11,6 +11,9 @@ export { CheckIndicator } from "./check-indicator";
 export { RadioQuestion } from "./radio-question";
 export { CardCheckboxQuestion } from "./card-checkbox-question";
 export { TextInputQuestion } from "./text-input-question";
+export { TextareaQuestion } from "./textarea-question";
+export { SliderQuestion } from "./slider-question";
+export { RatingQuestion } from "./rating-question";
 export { QuestionRenderer } from "./question-renderer";
 
 // Hooks

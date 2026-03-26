@@ -1,8 +1,11 @@
 "use client";
 
 import { TextInputQuestion } from "./text-input-question";
+import { TextareaQuestion } from "./textarea-question";
 import { RadioQuestion } from "./radio-question";
 import { CardCheckboxQuestion } from "./card-checkbox-question";
+import { SliderQuestion } from "./slider-question";
+import { RatingQuestion } from "./rating-question";
 import type { QuestionConfig, CardOption } from "./types";
 import { useQuestionOptions } from "./hooks/use-question-options";
 
@@ -115,6 +118,46 @@ export function QuestionRenderer<A>({
         />
       );
     }
+
+    case "textarea":
+      return (
+        <TextareaQuestion
+          id={question.id}
+          value={(value as string) ?? ""}
+          onChange={onChange}
+          disabled={!isActive}
+          placeholder={question.placeholder}
+        />
+      );
+
+    case "slider": {
+      const sp = question.sliderProps;
+      return (
+        <SliderQuestion
+          id={question.id}
+          value={value as number | undefined}
+          onChange={onChange}
+          min={sp?.min}
+          max={sp?.max}
+          step={sp?.step}
+          minLabel={sp?.minLabel}
+          maxLabel={sp?.maxLabel}
+          disabled={!isActive}
+        />
+      );
+    }
+
+    case "rating":
+      return (
+        <RatingQuestion
+          id={question.id}
+          value={value as number | undefined}
+          onChange={onChange}
+          max={question.ratingProps?.max}
+          disabled={!isActive}
+          onAutoAdvance={isActive ? onEnter : undefined}
+        />
+      );
 
     default:
       return (

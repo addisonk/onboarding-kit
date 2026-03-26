@@ -13,6 +13,9 @@ interface DemoAttributes {
   radioButtons?: string;
   multiSelect?: string[];
   textInput?: string;
+  textareaInput?: string;
+  sliderValue?: number;
+  ratingValue?: number;
   booleanChoice?: boolean;
   conditionalFollow?: string;
 }
@@ -89,7 +92,43 @@ const questions: QuestionConfig<DemoAttributes>[] = [
     validationErrorMessage: "Please type something",
   },
 
-  // 6. Boolean — yes/no
+  // 6. Textarea — long-form text
+  {
+    id: "textareaInput",
+    title: "Textarea",
+    description:
+      'type: "textarea". Multi-line input using shadcn\'s Textarea component. Great for feedback, comments, or open-ended responses.',
+    type: "textarea",
+    placeholder: "Tell us what you think...",
+  },
+
+  // 7. Slider — numeric range
+  {
+    id: "sliderValue",
+    title: "Slider",
+    description:
+      'type: "slider". Uses shadcn\'s Slider component. Configurable min, max, step, and endpoint labels.',
+    type: "slider",
+    sliderProps: {
+      min: 0,
+      max: 10,
+      step: 1,
+      minLabel: "Not likely",
+      maxLabel: "Very likely",
+    },
+  },
+
+  // 8. Rating — star rating
+  {
+    id: "ratingValue",
+    title: "Star Rating",
+    description:
+      'type: "rating". Interactive star rating with hover preview. Configurable number of stars (default 5). Auto-advances on selection.',
+    type: "rating",
+    ratingProps: { max: 5 },
+  },
+
+  // 9. Boolean — yes/no
   {
     id: "booleanChoice",
     title: "Boolean (Yes / No)",
@@ -98,7 +137,7 @@ const questions: QuestionConfig<DemoAttributes>[] = [
     type: "boolean",
   },
 
-  // 7. Conditional question — only shows if they said Yes above
+  // 10. Conditional question — only shows if they said Yes above
   {
     id: "conditionalFollow",
     title: "Conditional Question",

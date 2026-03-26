@@ -42,7 +42,7 @@ export interface QuestionConfig<A = any> {
   id: keyof A & string;
   title: string;
   description?: string;
-  type: "text" | "number" | "radio" | "boolean" | "card-checkbox" | "info";
+  type: "text" | "number" | "textarea" | "radio" | "boolean" | "card-checkbox" | "slider" | "rating" | "info";
   options?: QuestionOptions<any, A>;
   condition?: (attributes: A) => boolean;
   optional?: boolean;
@@ -55,6 +55,18 @@ export interface QuestionConfig<A = any> {
   placeholders?: string[];
   cardCheckboxProps?: {
     singleSelection?: boolean;
+  };
+  sliderProps?: {
+    min?: number;
+    max?: number;
+    step?: number;
+    /** Labels for min and max ends. */
+    minLabel?: string;
+    maxLabel?: string;
+  };
+  ratingProps?: {
+    /** Number of stars/items. Default 5. */
+    max?: number;
   };
   validationSchema?: z.ZodSchema;
   validationErrorMessage?: string;
