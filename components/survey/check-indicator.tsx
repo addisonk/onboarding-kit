@@ -13,7 +13,7 @@ export function CheckIndicator({ selected, className }: CheckIndicatorProps) {
   return (
     <div
       className={cn(
-        "flex size-5 items-center justify-center rounded-full border transition-colors",
+        "flex size-5 items-center justify-center rounded-full border transition-[border-color,background-color]",
         selected ? "border-primary bg-primary" : "border-border bg-muted/80",
         className
       )}

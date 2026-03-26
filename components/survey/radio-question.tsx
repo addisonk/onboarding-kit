@@ -72,15 +72,12 @@ export function RadioQuestion({
   /* ─── Card variant ─────────────────────────────────────────────────── */
   if (variant === "card") {
     return (
-      <motion.div
+      <div
         role="radiogroup"
         className={cn(
           "grid grid-cols-2 gap-4",
           className
         )}
-        initial="hidden"
-        animate="show"
-        variants={{ show: { transition: { staggerChildren: 0.05 } } }}
       >
         {options.map((option) => {
           const isSelected = value === option.value;
@@ -88,37 +85,29 @@ export function RadioQuestion({
           return (
             <motion.div
               key={option.value}
-              variants={{
-                hidden: { opacity: 0, y: 8 },
-                show: { opacity: 1, y: 0, transition: { duration: 0.25, ease: [0.2, 0, 0, 1] } },
-              }}
+              whileTap={disabled ? {} : { scale: 0.96 }}
               className={cn(
-                "group relative flex cursor-pointer flex-col items-center justify-center overflow-hidden rounded-xl border p-6 transition-colors",
+                "group relative flex cursor-pointer flex-col items-center justify-center overflow-hidden rounded-xl p-6 ring-1 transition-[box-shadow,ring-color]",
                 "min-h-[160px]",
                 "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
                 isSelected
-                  ? "border-primary bg-primary/5"
-                  : "border-border bg-card hover:border-primary/40",
+                  ? "ring-primary shadow-sm"
+                  : "ring-border hover:ring-primary/40 shadow-[0_1px_2px_0_rgb(0_0_0/0.04)]",
                 disabled && "cursor-not-allowed opacity-60"
               )}
               onClick={() => handleSelect(option.value)}
               onKeyDown={(e) => handleKeyDown(e, option.value)}
-              whileTap={disabled ? {} : { scale: 0.96 }}
               tabIndex={disabled ? -1 : 0}
               role="radio"
               aria-checked={isSelected}
             >
-              {/* Progress sweep */}
+              {/* Progress sweep — fills left to right on selection */}
               {isAnimating && !disabled && (
                 <motion.div
-                  className="absolute inset-0 origin-left"
-                  style={{
-                    backgroundColor: AUTO_ADVANCE_CONFIG.PROGRESS_BAR_COLOR,
-                    opacity: AUTO_ADVANCE_CONFIG.PROGRESS_BAR_OPACITY,
-                  }}
-                  initial={PROGRESS_BAR_ANIMATION.initial}
-                  animate={PROGRESS_BAR_ANIMATION.animate}
-                  transition={PROGRESS_BAR_ANIMATION.transition}
+                  className="absolute inset-0 z-0 origin-left bg-primary/5 will-change-transform"
+                  initial={{ scaleX: 0 }}
+                  animate={{ scaleX: 1 }}
+                  transition={{ duration: 0.8, ease: "linear" }}
                 />
               )}
 
@@ -145,18 +134,15 @@ export function RadioQuestion({
             </motion.div>
           );
         })}
-      </motion.div>
+      </div>
     );
   }
 
   /* ─── Button variant (default) ─────────────────────────────────────── */
   return (
-    <motion.div
+    <div
       role="radiogroup"
       className={cn("flex flex-col gap-3", className)}
-      initial="hidden"
-      animate="show"
-      variants={{ show: { transition: { staggerChildren: 0.05 } } }}
     >
       {options.map((option) => {
         const isSelected = value === option.value;
@@ -164,37 +150,29 @@ export function RadioQuestion({
         return (
           <motion.div
             key={option.value}
-            variants={{
-              hidden: { opacity: 0, y: 8 },
-              show: { opacity: 1, y: 0, transition: { duration: 0.25, ease: [0.2, 0, 0, 1] } },
-            }}
+            whileTap={disabled ? {} : { scale: 0.96 }}
             className={cn(
-              "group relative flex w-full cursor-pointer items-center justify-between overflow-hidden rounded-lg border px-3 text-sm shadow-sm transition-colors",
+              "group relative flex w-full cursor-pointer items-center justify-between overflow-hidden rounded-lg px-3 text-sm ring-1 transition-[box-shadow,ring-color]",
               "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
               option.description ? "min-h-[60px] py-2.5" : "h-[50px]",
               isSelected
-                ? "border-primary bg-primary/5"
-                : "border-border bg-card hover:border-primary/40",
+                ? "ring-primary shadow-sm"
+                : "ring-border bg-card hover:ring-primary/40 shadow-[0_1px_2px_0_rgb(0_0_0/0.04)]",
               disabled && "cursor-not-allowed opacity-60"
             )}
             onClick={() => handleSelect(option.value)}
             onKeyDown={(e) => handleKeyDown(e, option.value)}
-            whileTap={disabled ? {} : { scale: 0.96 }}
             tabIndex={disabled ? -1 : 0}
             role="radio"
             aria-checked={isSelected}
           >
-            {/* Progress sweep */}
+            {/* Progress sweep — fills left to right on selection */}
             {isAnimating && !disabled && (
               <motion.div
-                className="absolute inset-0 origin-left"
-                style={{
-                  backgroundColor: AUTO_ADVANCE_CONFIG.PROGRESS_BAR_COLOR,
-                  opacity: AUTO_ADVANCE_CONFIG.PROGRESS_BAR_OPACITY,
-                }}
-                initial={PROGRESS_BAR_ANIMATION.initial}
-                animate={PROGRESS_BAR_ANIMATION.animate}
-                transition={PROGRESS_BAR_ANIMATION.transition}
+                className="absolute inset-0 z-0 origin-left bg-primary/5 will-change-transform"
+                initial={{ scaleX: 0 }}
+                animate={{ scaleX: 1 }}
+                transition={{ duration: 0.8, ease: "linear" }}
               />
             )}
 
@@ -225,6 +203,6 @@ export function RadioQuestion({
           </motion.div>
         );
       })}
-    </motion.div>
+    </div>
   );
 }

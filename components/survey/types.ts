@@ -42,7 +42,7 @@ export interface QuestionConfig<A = any> {
   id: keyof A & string;
   title: string;
   description?: string;
-  type: "text" | "number" | "radio" | "boolean" | "card-checkbox";
+  type: "text" | "number" | "radio" | "boolean" | "card-checkbox" | "info";
   options?: QuestionOptions<any, A>;
   condition?: (attributes: A) => boolean;
   optional?: boolean;

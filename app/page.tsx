@@ -8,71 +8,110 @@ import type { QuestionConfig } from "@/components/survey";
 /* ── Define your survey shape ─────────────────────────────────────────── */
 
 interface DemoAttributes {
-  goal?: string;
-  experience?: string;
-  interests?: string[];
-  name?: string;
-  newsletter?: boolean;
+  _intro?: string;
+  radioCards?: string;
+  radioButtons?: string;
+  multiSelect?: string[];
+  textInput?: string;
+  booleanChoice?: boolean;
+  conditionalFollow?: string;
 }
 
-/* ── Define your questions ────────────────────────────────────────────── */
+/* ── Questions that demo every feature ────────────────────────────────── */
 
 const questions: QuestionConfig<DemoAttributes>[] = [
+  // 1. Intro — text-only welcome screen, just a continue button
   {
-    id: "goal",
-    title: "What brings you here?",
-    description: "We'll personalize your experience based on your answer.",
+    id: "_intro",
+    title: "Welcome to Survey Kit",
+    description:
+      "A plug-and-play survey component for Next.js + shadcn. This demo walks you through every question type the library supports. Hit continue to start.",
+    type: "info",
+  },
+
+  // 2. Radio cards — grid of visual options with emoji/icons
+  {
+    id: "radioCards",
+    title: "Radio Cards",
+    description:
+      'type: "radio" with variant: "card". A 2-column grid with emoji, label, and description. Selecting auto-advances after a brief animation.',
     type: "radio",
     variant: "card",
-    maxWidth: "lg",
     options: [
-      { value: "learn", label: "Learn something new", emoji: "📚", description: "Courses & tutorials" },
-      { value: "build", label: "Build a project", emoji: "🧱", description: "Hands-on creation" },
-      { value: "grow", label: "Grow my career", emoji: "💼", description: "Skills & networking" },
-      { value: "explore", label: "Just exploring", emoji: "🔦", description: "See what's here" },
+      { value: "minimal", label: "Minimal", emoji: "✨", description: "Clean & simple" },
+      { value: "playful", label: "Playful", emoji: "🎨", description: "Fun & colorful" },
+      { value: "corporate", label: "Corporate", emoji: "💼", description: "Professional tone" },
+      { value: "technical", label: "Technical", emoji: "⚙️", description: "Developer-focused" },
     ],
-    validationSchema: z.string().min(1),
-    validationErrorMessage: "Please select a goal to continue",
   },
+
+  // 3. Radio buttons — vertical list, single select
   {
-    id: "experience",
-    title: "How much experience do you have?",
+    id: "radioButtons",
+    title: "Radio Buttons",
+    description:
+      'type: "radio" with variant: "button" (default). A vertical list with optional descriptions. Also auto-advances on select.',
     type: "radio",
     variant: "button",
     options: [
-      { value: "beginner", label: "Beginner", description: "Just getting started" },
-      { value: "intermediate", label: "Intermediate", description: "Some projects under my belt" },
-      { value: "advanced", label: "Advanced", description: "I know my way around" },
+      { value: "sm", label: "Small (1–10)", description: "Early stage or personal project" },
+      { value: "md", label: "Medium (11–100)", description: "Growing team with structure" },
+      { value: "lg", label: "Large (100+)", description: "Enterprise-scale organization" },
     ],
   },
+
+  // 4. Card checkbox — multi-select grid
   {
-    id: "interests",
-    title: "What topics interest you?",
-    description: "Select all that apply.",
+    id: "multiSelect",
+    title: "Multi-Select Cards",
+    description:
+      'type: "card-checkbox". Users can select multiple options. Validated with Zod to require at least one.',
     type: "card-checkbox",
-    maxWidth: "lg",
     options: [
-      { value: "design", label: "Design", description: "UI/UX, visual design, prototyping" },
-      { value: "engineering", label: "Engineering", description: "Frontend, backend, infra" },
-      { value: "ai", label: "AI & ML", description: "Models, agents, automation" },
-      { value: "business", label: "Business", description: "Strategy, growth, ops" },
+      { value: "onboarding", label: "Onboarding", description: "New user sign-up flows" },
+      { value: "feedback", label: "Feedback", description: "NPS, CSAT, product surveys" },
+      { value: "quiz", label: "Quiz", description: "Knowledge checks & assessments" },
+      { value: "checkout", label: "Checkout", description: "Pre-purchase qualification" },
     ],
     validationSchema: z.array(z.string()).min(1),
-    validationErrorMessage: "Pick at least one topic",
+    validationErrorMessage: "Select at least one use case",
   },
+
+  // 5. Text input — with placeholder
   {
-    id: "name",
-    title: "What should we call you?",
+    id: "textInput",
+    title: "Text Input",
+    description:
+      'type: "text". Supports custom placeholder, Zod validation, and an animated arrow button that appears when you type 2+ characters.',
     type: "text",
-    placeholder: "eg. John",
-    maxWidth: "sm",
-    validationSchema: z.string().min(1).max(50),
-    validationErrorMessage: "Please enter your name",
+    placeholder: "eg. My Awesome Survey",
+    validationSchema: z.string().min(1).max(100),
+    validationErrorMessage: "Please type something",
   },
+
+  // 6. Boolean — yes/no
   {
-    id: "newsletter",
-    title: "Want weekly tips in your inbox?",
+    id: "booleanChoice",
+    title: "Boolean (Yes / No)",
+    description:
+      'type: "boolean". Renders as two radio buttons: Yes and No. The value is stored as a true/false boolean.',
     type: "boolean",
+  },
+
+  // 7. Conditional question — only shows if they said Yes above
+  {
+    id: "conditionalFollow",
+    title: "Conditional Question",
+    description:
+      "This question only appears because you selected Yes on the previous step. Questions can have a condition function that controls visibility.",
+    type: "radio",
+    variant: "button",
+    condition: (attrs) => attrs.booleanChoice === true,
+    options: [
+      { value: "router", label: "URL-based (Next.js router)" },
+      { value: "state", label: "State-based (useState)" },
+      { value: "both", label: "Both — let me decide per survey" },
+    ],
   },
 ];
 
@@ -86,26 +125,35 @@ export default function Home() {
   if (completed) {
     return (
       <div className="flex min-h-svh items-center justify-center p-8">
-        <div className="max-w-md text-center">
-          <div className="mb-4 text-4xl">🎉</div>
+        <div className="max-w-lg text-center">
           <h1 className="mb-2 text-2xl font-bold text-foreground">
-            All done!
+            That&apos;s every question type
           </h1>
           <p className="mb-6 text-muted-foreground">
-            Here&apos;s what you told us:
+            Here&apos;s the collected data — this is what your onComplete callback receives.
           </p>
-          <pre className="rounded-lg border bg-card p-4 text-left text-sm font-variant-numeric-tabular">
+          <pre className="rounded-lg border bg-card p-4 text-left text-sm tabular-nums">
             {JSON.stringify(attributes, null, 2)}
           </pre>
-          <button
-            onClick={() => {
-              setAttributes({});
-              setCompleted(false);
-            }}
-            className="mt-6 cursor-pointer text-sm text-primary underline underline-offset-4"
-          >
-            Start over
-          </button>
+          <div className="mt-6 flex flex-col items-center gap-2">
+            <button
+              onClick={() => {
+                setAttributes({});
+                setCompleted(false);
+              }}
+              className="cursor-pointer text-sm text-primary underline underline-offset-4"
+            >
+              Run the demo again
+            </button>
+            <a
+              href="https://github.com/addisonk/survey-kit"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm text-muted-foreground underline underline-offset-4 hover:text-foreground"
+            >
+              View on GitHub
+            </a>
+          </div>
         </div>
       </div>
     );
@@ -122,16 +170,16 @@ export default function Home() {
           setCompleted(true);
         }}
         showProgress
-        logo={<span className="text-lg font-bold tracking-tight">Acme Co.</span>}
+        logo={<span className="text-lg font-bold tracking-tight">Survey Kit</span>}
         rightImage="/right-panel.png"
         hideRightPanel={hidePanel}
         className="h-full"
       />
 
-      {/* Layout toggle */}
+      {/* Layout toggle — top right, over the panel */}
       <button
         onClick={() => setHidePanel((p) => !p)}
-        className="fixed bottom-6 left-6 z-20 hidden cursor-pointer rounded-lg border bg-card px-3 py-1.5 text-xs font-medium text-foreground shadow-sm transition-colors hover:bg-muted md:block"
+        className="fixed right-8 top-8 z-20 hidden cursor-pointer rounded-lg bg-black/50 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-sm transition-colors hover:bg-black/70 md:block"
       >
         {hidePanel ? "Show panel" : "Hide panel"}
       </button>

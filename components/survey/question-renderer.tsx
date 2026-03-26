@@ -34,6 +34,9 @@ export function QuestionRenderer<A>({
   }
 
   switch (question.type) {
+    case "info":
+      return null;
+
     case "text":
       return (
         <TextInputQuestion

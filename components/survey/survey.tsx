@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { z } from "zod";
 import { AlertCircle, ArrowLeft } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { SurveyShell, SurveyQuestion } from "./survey-shell";
 import { QuestionRenderer } from "./question-renderer";
@@ -64,7 +65,9 @@ export function Survey<A extends Record<string, any>>({
 
   useEffect(() => {
     if (currentQuestion) {
-      setTempAnswer((attributes as any)[currentQuestion.id]);
+      setTempAnswer(
+        currentQuestion.type === "info" ? true : (attributes as any)[currentQuestion.id]
+      );
       setValidationError("");
     }
   }, [currentQuestion, attributes]);
@@ -140,7 +143,7 @@ export function Survey<A extends Record<string, any>>({
   if (!currentQuestion) return null;
 
   const showBack = currentQuestionIndex > 0 || !!onBackFromFirstQuestion;
-  const showNext = !hideContinueButton && !!tempAnswer;
+  const showNext = !hideContinueButton && (currentQuestion.type === "info" || !!tempAnswer);
   const progressPercent =
     currentQuestionIndex >= 0 && totalQuestions
       ? ((currentQuestionIndex + 1) / totalQuestions) * 100
@@ -194,13 +197,9 @@ export function Survey<A extends Record<string, any>>({
 
         {/* Back + Continue — desktop (always rendered to reserve space) */}
         <div className="mt-8 hidden items-center justify-between md:flex">
-          {showBack ? (
-            <Button variant="outline" size="icon" className="min-h-10 min-w-10" onClick={goToPrevious} aria-label="Go back">
-              <ArrowLeft />
-            </Button>
-          ) : (
-            <div />
-          )}
+          <Button variant="outline" size="icon" className={cn("min-h-10 min-w-10", showBack ? "" : "invisible")} onClick={goToPrevious} aria-label="Go back">
+            <ArrowLeft />
+          </Button>
           <Button size="lg" onClick={goToNext} className={showNext ? "" : "invisible"}>
             Continue
           </Button>

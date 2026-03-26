@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
 import { CheckIndicator } from "./check-indicator";
@@ -50,50 +49,46 @@ export function CardCheckboxQuestion({
       {options.map((option) => {
         const isSelected = values.includes(option.value);
         return (
-          <motion.div
+          <Card
             key={option.value}
-            whileTap={disabled ? {} : { scale: 0.96 }}
+            className={cn(
+              "group relative cursor-pointer transition-[box-shadow,ring-color] active:scale-[0.96]",
+              isSelected
+                ? "ring-2 ring-primary"
+                : "hover:ring-1 hover:ring-primary/40",
+              disabled && "cursor-not-allowed opacity-60"
+            )}
+            onClick={() => toggleOption(option.value)}
+            tabIndex={disabled ? -1 : 0}
+            role="checkbox"
+            aria-checked={isSelected}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                toggleOption(option.value);
+              }
+            }}
           >
-            <Card
-              className={cn(
-                "group relative cursor-pointer transition-colors",
-                isSelected
-                  ? "ring-2 ring-primary"
-                  : "hover:ring-1 hover:ring-primary/40",
-                disabled && "cursor-not-allowed opacity-60"
-              )}
-              onClick={() => toggleOption(option.value)}
-              tabIndex={disabled ? -1 : 0}
-              role="checkbox"
-              aria-checked={isSelected}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  toggleOption(option.value);
-                }
-              }}
-            >
-              {option.imageUrl && (
-                <img
-                  src={option.imageUrl}
-                  alt={option.label}
-                  className="aspect-square w-full object-cover"
-                />
-              )}
-              <CardContent>
-                <div className="text-base font-medium text-foreground">
-                  {option.label}
+            {option.imageUrl && (
+              <img
+                src={option.imageUrl}
+                alt={option.label}
+                className="aspect-square w-full object-cover"
+              />
+            )}
+            <CardContent>
+              <div className="text-base font-medium text-foreground">
+                {option.label}
+              </div>
+              {option.description && (
+                <div className="mt-1 text-sm text-muted-foreground">
+                  {option.description}
                 </div>
-                {option.description && (
-                  <div className="mt-1 text-sm text-muted-foreground">
-                    {option.description}
-                  </div>
-                )}
-              </CardContent>
+              )}
+            </CardContent>
 
-              <CheckIndicator selected={isSelected} className="absolute right-3 top-3" />
-            </Card>
-          </motion.div>
+            <CheckIndicator selected={isSelected} className="absolute right-3 top-3" />
+          </Card>
         );
       })}
     </div>
