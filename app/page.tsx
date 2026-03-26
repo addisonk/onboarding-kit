@@ -26,7 +26,7 @@ const questions: QuestionConfig<DemoAttributes>[] = [
   // 1. Intro — text-only welcome screen, just a continue button
   {
     id: "_intro",
-    title: "Welcome to Survey Kit",
+    title: "Welcome to Onboarding Kit",
     description:
       "A plug-and-play survey component for Next.js + shadcn. This demo walks you through every question type the library supports. Hit continue to start.",
     type: "info",
@@ -185,7 +185,7 @@ export default function Home() {
               Run the demo again
             </button>
             <a
-              href="https://github.com/addisonk/survey-kit"
+              href="https://github.com/addisonk/onboarding-kit"
               target="_blank"
               rel="noopener noreferrer"
               className="text-sm text-muted-foreground underline underline-offset-4 hover:text-foreground"
@@ -209,7 +209,7 @@ export default function Home() {
           setCompleted(true);
         }}
         showProgress
-        logo={<span className="text-lg font-bold tracking-tight">Survey Kit</span>}
+        logo={<span className="text-lg font-bold tracking-tight">Onboarding Kit</span>}
         rightImage="/right-panel.png"
         hideRightPanel={hidePanel}
         className="h-full"
