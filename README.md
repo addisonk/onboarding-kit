@@ -2,7 +2,7 @@
 
 Drop-in onboarding flows for Next.js + shadcn/ui. Define steps as data, get structured answers back.
 
-[Live Demo](https://survey-kit.vercel.app)
+[Live Demo](https://onboarding-kit.vercel.app)
 
 ## Usage
 
