@@ -1,16 +1,13 @@
 "use client";
 
-import { Check } from "lucide-react";
 import { useState, type KeyboardEvent, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { CheckIndicator } from "./check-indicator";
 import {
   AUTO_ADVANCE_CONFIG,
   PROGRESS_BAR_ANIMATION,
 } from "./auto-advance-config";
-import { getMaxWidthClass } from "./utils";
-import type { MaxWidth } from "./types";
-
 interface RadioOption {
   value: string;
   label: string;
@@ -27,7 +24,6 @@ interface RadioQuestionProps {
   className?: string;
   onAutoAdvance?: () => void;
   disabled?: boolean;
-  maxWidth?: MaxWidth;
   variant?: "button" | "card";
 }
 
@@ -38,7 +34,6 @@ export function RadioQuestion({
   className,
   onAutoAdvance,
   disabled = false,
-  maxWidth,
   variant = "button",
 }: RadioQuestionProps) {
   const [animatingValue, setAnimatingValue] = useState<string | null>(null);
@@ -77,13 +72,15 @@ export function RadioQuestion({
   /* ─── Card variant ─────────────────────────────────────────────────── */
   if (variant === "card") {
     return (
-      <div
+      <motion.div
         role="radiogroup"
         className={cn(
           "grid grid-cols-2 gap-4",
-          className,
-          getMaxWidthClass(maxWidth)
+          className
         )}
+        initial="hidden"
+        animate="show"
+        variants={{ show: { transition: { staggerChildren: 0.05 } } }}
       >
         {options.map((option) => {
           const isSelected = value === option.value;
@@ -91,27 +88,22 @@ export function RadioQuestion({
           return (
             <motion.div
               key={option.value}
+              variants={{
+                hidden: { opacity: 0, y: 8 },
+                show: { opacity: 1, y: 0, transition: { duration: 0.25, ease: [0.2, 0, 0, 1] } },
+              }}
               className={cn(
                 "group relative flex cursor-pointer flex-col items-center justify-center overflow-hidden rounded-xl border p-6 transition-colors",
                 "min-h-[160px]",
                 "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
                 isSelected
                   ? "border-primary bg-primary/5"
-                  : "border-border bg-card hover:border-primary/40 hover:bg-muted/50",
+                  : "border-border bg-card hover:border-primary/40",
                 disabled && "cursor-not-allowed opacity-60"
               )}
               onClick={() => handleSelect(option.value)}
               onKeyDown={(e) => handleKeyDown(e, option.value)}
               whileTap={disabled ? {} : { scale: 0.96 }}
-              animate={
-                isAnimating && !disabled
-                  ? { opacity: AUTO_ADVANCE_CONFIG.ANIMATION_PATTERN }
-                  : {}
-              }
-              transition={{
-                duration: AUTO_ADVANCE_CONFIG.ANIMATION_DURATION / 1000,
-                ease: AUTO_ADVANCE_CONFIG.ANIMATION_EASING,
-              }}
               tabIndex={disabled ? -1 : 0}
               role="radio"
               aria-checked={isSelected}
@@ -130,29 +122,7 @@ export function RadioQuestion({
                 />
               )}
 
-              {/* Check indicator */}
-              <motion.div
-                className={cn(
-                  "absolute right-3 top-3 z-10 flex size-5 items-center justify-center rounded-full border transition-colors",
-                  "group-hover:border-primary group-hover:bg-primary",
-                  isSelected
-                    ? "border-primary bg-primary"
-                    : "border-border bg-muted/80"
-                )}
-              >
-                {isSelected && (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.25, filter: "blur(4px)" }}
-                    animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-                    transition={{ type: "spring", duration: 0.3, bounce: 0 }}
-                  >
-                    <Check
-                      strokeWidth={3}
-                      className="size-3 text-primary-foreground"
-                    />
-                  </motion.div>
-                )}
-              </motion.div>
+              <CheckIndicator selected={isSelected} className="absolute right-3 top-3 z-10" />
 
               {/* Icon / Emoji */}
               <div className="relative z-10 mb-4 flex items-center justify-center">
@@ -175,15 +145,18 @@ export function RadioQuestion({
             </motion.div>
           );
         })}
-      </div>
+      </motion.div>
     );
   }
 
   /* ─── Button variant (default) ─────────────────────────────────────── */
   return (
-    <div
+    <motion.div
       role="radiogroup"
-      className={cn("flex flex-col gap-3", className, getMaxWidthClass(maxWidth))}
+      className={cn("flex flex-col gap-3", className)}
+      initial="hidden"
+      animate="show"
+      variants={{ show: { transition: { staggerChildren: 0.05 } } }}
     >
       {options.map((option) => {
         const isSelected = value === option.value;
@@ -191,27 +164,22 @@ export function RadioQuestion({
         return (
           <motion.div
             key={option.value}
+            variants={{
+              hidden: { opacity: 0, y: 8 },
+              show: { opacity: 1, y: 0, transition: { duration: 0.25, ease: [0.2, 0, 0, 1] } },
+            }}
             className={cn(
               "group relative flex w-full cursor-pointer items-center justify-between overflow-hidden rounded-lg border px-3 text-sm shadow-sm transition-colors",
               "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
               option.description ? "min-h-[60px] py-2.5" : "h-[50px]",
               isSelected
                 ? "border-primary bg-primary/5"
-                : "border-border bg-card hover:border-primary/40 hover:bg-muted/50",
+                : "border-border bg-card hover:border-primary/40",
               disabled && "cursor-not-allowed opacity-60"
             )}
             onClick={() => handleSelect(option.value)}
             onKeyDown={(e) => handleKeyDown(e, option.value)}
             whileTap={disabled ? {} : { scale: 0.96 }}
-            animate={
-              isAnimating && !disabled
-                ? { opacity: AUTO_ADVANCE_CONFIG.ANIMATION_PATTERN }
-                : {}
-            }
-            transition={{
-              duration: AUTO_ADVANCE_CONFIG.ANIMATION_DURATION / 1000,
-              ease: AUTO_ADVANCE_CONFIG.ANIMATION_EASING,
-            }}
             tabIndex={disabled ? -1 : 0}
             role="radio"
             aria-checked={isSelected}
@@ -253,32 +221,10 @@ export function RadioQuestion({
               </span>
             </div>
 
-            {/* Check indicator */}
-            <motion.div
-              className={cn(
-                "relative z-10 flex size-5 items-center justify-center rounded-full border transition-colors",
-                "group-hover:border-primary group-hover:bg-primary",
-                isSelected
-                  ? "border-primary bg-primary"
-                  : "border-border bg-muted/80"
-              )}
-            >
-              {isSelected && (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.25, filter: "blur(4px)" }}
-                  animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-                  transition={{ type: "spring", duration: 0.3, bounce: 0 }}
-                >
-                  <Check
-                    strokeWidth={3}
-                    className="size-3 text-primary-foreground"
-                  />
-                </motion.div>
-              )}
-            </motion.div>
+            <CheckIndicator selected={isSelected} className="relative z-10" />
           </motion.div>
         );
       })}
-    </div>
+    </motion.div>
   );
 }

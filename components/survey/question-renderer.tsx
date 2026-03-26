@@ -25,22 +25,6 @@ export function QuestionRenderer<A>({
 }: QuestionRendererProps<A>) {
   const { options, error } = useQuestionOptions(question, attributes);
 
-  // Default max widths per question type
-  const maxWidth = (() => {
-    if (question.maxWidth !== undefined) return question.maxWidth;
-    switch (question.type) {
-      case "radio":
-      case "boolean":
-        return "md" as const;
-      case "number":
-        return "sm" as const;
-      case "card-checkbox":
-        return "lg" as const;
-      default:
-        return false as const;
-    }
-  })();
-
   if (error) {
     return (
       <div className="py-4 text-destructive">
@@ -58,7 +42,7 @@ export function QuestionRenderer<A>({
           onChange={onChange}
           onEnter={isActive ? onEnter : undefined}
           disabled={!isActive}
-          maxWidth={maxWidth}
+          placeholder={question.placeholder}
           placeholders={question.placeholders}
         />
       );
@@ -74,7 +58,6 @@ export function QuestionRenderer<A>({
           type="number"
           min={18}
           max={120}
-          maxWidth={maxWidth}
         />
       );
 
@@ -90,7 +73,6 @@ export function QuestionRenderer<A>({
           onChange={onChange}
           onAutoAdvance={isActive ? onEnter : undefined}
           disabled={!isActive}
-          maxWidth={maxWidth}
           variant={question.variant}
         />
       );
@@ -107,7 +89,6 @@ export function QuestionRenderer<A>({
           onChange={(val: string) => onChange(val === "true")}
           onAutoAdvance={isActive ? onEnter : undefined}
           disabled={!isActive}
-          maxWidth={maxWidth}
         />
       );
 
@@ -128,7 +109,6 @@ export function QuestionRenderer<A>({
             }
           }}
           disabled={!isActive}
-          maxWidth={maxWidth}
         />
       );
     }

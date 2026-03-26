@@ -4,9 +4,8 @@ import { useState, useEffect, useRef } from "react";
 import { ArrowRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { getMaxWidthClass } from "./utils";
-import type { MaxWidth } from "./types";
 
 interface TextInputQuestionProps {
   id: string;
@@ -22,7 +21,6 @@ interface TextInputQuestionProps {
   disabled?: boolean;
   min?: number;
   max?: number;
-  maxWidth?: MaxWidth;
 }
 
 export function TextInputQuestion({
@@ -38,9 +36,9 @@ export function TextInputQuestion({
   disabled = false,
   min,
   max,
-  maxWidth,
 }: TextInputQuestionProps) {
-  const hasValue = value.trim().length >= 2;
+  const safeValue = typeof value === "string" ? value : "";
+  const hasValue = safeValue.trim().length >= 2;
   const [currentPlaceholder, setCurrentPlaceholder] = useState("");
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
   const [showCursor, setShowCursor] = useState(true);
@@ -49,7 +47,7 @@ export function TextInputQuestion({
 
   // Typewriter placeholder animation
   useEffect(() => {
-    if (value.length > 0 || !placeholders?.length) {
+    if (safeValue.length > 0 || !placeholders?.length) {
       if (placeholders?.length) setCurrentPlaceholder("");
       return;
     }
@@ -76,11 +74,11 @@ export function TextInputQuestion({
     return () => {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
-  }, [placeholderIndex, placeholders, value.length]);
+  }, [placeholderIndex, placeholders, safeValue.length]);
 
   // Cursor blink
   useEffect(() => {
-    if (value.length > 0 || !placeholders?.length) {
+    if (safeValue.length > 0 || !placeholders?.length) {
       setShowCursor(true);
       return;
     }
@@ -88,15 +86,15 @@ export function TextInputQuestion({
     return () => {
       if (cursorRef.current) clearInterval(cursorRef.current);
     };
-  }, [value.length, placeholders]);
+  }, [safeValue.length, placeholders]);
 
   const displayPlaceholder =
-    value.length === 0 && placeholders?.length
+    safeValue.length === 0 && placeholders?.length
       ? `${currentPlaceholder}${showCursor ? "|" : " "}`
       : placeholder;
 
   return (
-    <div className={cn("w-full", className, getMaxWidthClass(maxWidth))}>
+    <div className={cn("w-full", className)}>
       {label && (
         <label
           htmlFor={id}
@@ -106,20 +104,15 @@ export function TextInputQuestion({
         </label>
       )}
       <div className="relative">
-        <input
+        <Input
           id={id}
           type={type}
-          value={value}
+          value={safeValue}
           onChange={(e) => onChange(e.target.value)}
           placeholder={displayPlaceholder}
           className={cn(
-            "flex h-12 w-full rounded-lg border border-border bg-card px-3 py-2 text-lg text-foreground shadow-sm",
-            "transition-[border-color,box-shadow]",
-            "placeholder:text-muted-foreground",
-            "focus-visible:outline-none focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20",
-            "disabled:cursor-not-allowed disabled:opacity-50",
+            "h-12 text-lg",
             hasValue && "pr-12",
-            // Hide number spinners
             type === "number" &&
               "[appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
           )}
@@ -131,7 +124,6 @@ export function TextInputQuestion({
           }}
           disabled={disabled}
           inputMode={type === "number" ? "numeric" : undefined}
-          pattern={type === "number" ? "[0-9]*" : undefined}
           min={type === "number" && min !== undefined ? min : undefined}
           max={type === "number" && max !== undefined ? max : undefined}
           autoComplete="off"

@@ -49,6 +49,8 @@ export interface QuestionConfig<A = any> {
   maxWidth?: MaxWidth;
   /** Radio display style — "button" (vertical list) or "card" (2-col grid). */
   variant?: "button" | "card";
+  /** Static placeholder for text inputs. */
+  placeholder?: string;
   /** Rotating typewriter placeholders for text inputs. */
   placeholders?: string[];
   cardCheckboxProps?: {

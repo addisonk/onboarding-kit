@@ -7,6 +7,7 @@ export { SurveyShell, SurveyQuestion, SurveyRightPanel } from "./survey-shell";
 export type { SurveyShellProps, SurveyQuestionProps } from "./survey-shell";
 
 // Question components (for standalone use)
+export { CheckIndicator } from "./check-indicator";
 export { RadioQuestion } from "./radio-question";
 export { CardCheckboxQuestion } from "./card-checkbox-question";
 export { TextInputQuestion } from "./text-input-question";

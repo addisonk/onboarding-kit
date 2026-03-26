@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { z } from "zod";
-import { Sparkles, Target, Zap } from "lucide-react";
 import { Survey } from "@/components/survey";
 import type { QuestionConfig } from "@/components/survey";
 
@@ -28,9 +27,9 @@ const questions: QuestionConfig<DemoAttributes>[] = [
     maxWidth: "lg",
     options: [
       { value: "learn", label: "Learn something new", emoji: "📚", description: "Courses & tutorials" },
-      { value: "build", label: "Build a project", icon: Zap, description: "Hands-on creation" },
-      { value: "grow", label: "Grow my career", icon: Target, description: "Skills & networking" },
-      { value: "explore", label: "Just exploring", icon: Sparkles, description: "See what's here" },
+      { value: "build", label: "Build a project", emoji: "🧱", description: "Hands-on creation" },
+      { value: "grow", label: "Grow my career", emoji: "💼", description: "Skills & networking" },
+      { value: "explore", label: "Just exploring", emoji: "🔦", description: "See what's here" },
     ],
     validationSchema: z.string().min(1),
     validationErrorMessage: "Please select a goal to continue",
@@ -65,8 +64,8 @@ const questions: QuestionConfig<DemoAttributes>[] = [
     id: "name",
     title: "What should we call you?",
     type: "text",
+    placeholder: "eg. John",
     maxWidth: "sm",
-    placeholders: ["Alex", "Jordan", "Sam", "Taylor"],
     validationSchema: z.string().min(1).max(50),
     validationErrorMessage: "Please enter your name",
   },
@@ -82,6 +81,7 @@ const questions: QuestionConfig<DemoAttributes>[] = [
 export default function Home() {
   const [attributes, setAttributes] = useState<DemoAttributes>({});
   const [completed, setCompleted] = useState(false);
+  const [hidePanel, setHidePanel] = useState(false);
 
   if (completed) {
     return (
@@ -112,19 +112,29 @@ export default function Home() {
   }
 
   return (
-    <div className="flex min-h-svh items-center justify-center p-8">
-      <div className="w-full max-w-2xl">
-        <Survey
-          questions={questions}
-          attributes={attributes}
-          onAttributeChange={setAttributes}
-          onComplete={(final) => {
-            setAttributes(final);
-            setCompleted(true);
-          }}
-          showProgress
-        />
-      </div>
+    <div className="h-svh">
+      <Survey
+        questions={questions}
+        attributes={attributes}
+        onAttributeChange={setAttributes}
+        onComplete={(final) => {
+          setAttributes(final);
+          setCompleted(true);
+        }}
+        showProgress
+        logo={<span className="text-lg font-bold tracking-tight">Acme Co.</span>}
+        rightImage="/right-panel.png"
+        hideRightPanel={hidePanel}
+        className="h-full"
+      />
+
+      {/* Layout toggle */}
+      <button
+        onClick={() => setHidePanel((p) => !p)}
+        className="fixed bottom-6 left-6 z-20 hidden cursor-pointer rounded-lg border bg-card px-3 py-1.5 text-xs font-medium text-foreground shadow-sm transition-colors hover:bg-muted md:block"
+      >
+        {hidePanel ? "Show panel" : "Hide panel"}
+      </button>
     </div>
   );
 }

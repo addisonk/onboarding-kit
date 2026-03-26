@@ -2,32 +2,36 @@
 
 import { useEffect, useRef, useState } from "react";
 import { z } from "zod";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, ArrowLeft } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { SurveyShell, SurveyQuestion } from "./survey-shell";
 import { QuestionRenderer } from "./question-renderer";
 import { useCurrentQuestion } from "./hooks/use-current-question";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
 import type { QuestionConfig } from "./types";
 
 export interface SurveyProps<A extends Record<string, any>> {
-  /** The question definitions to render. */
   questions: QuestionConfig<A>[];
-  /** Current answer state — parent owns this. */
   attributes: A;
-  /** Called whenever an answer changes. */
   onAttributeChange: (attributes: A) => void;
-  /** Called when the user completes the last question. */
   onComplete: (attributes: A) => void;
-  /** Optional right-panel content (e.g. illustration). */
+  /** Custom right panel content. Overrides `rightImage`. */
   rightContent?: React.ReactNode;
-  /** Called when the user presses back on the first question. */
+  /** Shorthand: provide an image URL and it fills the right panel as cover. */
+  rightImage?: string;
+  /** Hide the right panel and center the survey content. */
+  hideRightPanel?: boolean;
+  /** Logo image URL for top-left branding. Max height 32px. */
+  logoUrl?: string;
+  /** Custom logo element (overrides `logoUrl`). */
+  logo?: React.ReactNode;
   onBackFromFirstQuestion?: () => void;
-  /** Hide the continue button (useful for auto-advance-only flows). */
   hideContinueButton?: boolean;
-  /** Hide the per-question title (if you render it yourself). */
   hideQuestionTitle?: boolean;
-  /** Show the progress bar. */
   showProgress?: boolean;
+  className?: string;
 }
 
 export function Survey<A extends Record<string, any>>({
@@ -36,10 +40,15 @@ export function Survey<A extends Record<string, any>>({
   onAttributeChange,
   onComplete,
   rightContent,
+  rightImage,
+  hideRightPanel = false,
+  logoUrl,
+  logo,
   onBackFromFirstQuestion,
   hideContinueButton = false,
   hideQuestionTitle = false,
   showProgress = false,
+  className,
 }: SurveyProps<A>) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [tempAnswer, setTempAnswer] = useState<any>(null);
@@ -53,7 +62,6 @@ export function Survey<A extends Record<string, any>>({
     totalQuestions,
   } = useCurrentQuestion(questions, attributes);
 
-  // Sync temp answer when question changes.
   useEffect(() => {
     if (currentQuestion) {
       setTempAnswer((attributes as any)[currentQuestion.id]);
@@ -81,13 +89,10 @@ export function Survey<A extends Record<string, any>>({
 
   const goToNext = () => {
     if (!validate()) return;
-
-    // Commit answer
     if (currentQuestion) {
       const next = { ...attributes, [currentQuestion.id]: tempAnswer };
       onAttributeChange(next);
     }
-
     if (
       currentQuestionIndex !== -1 &&
       currentQuestionIndex < filteredQuestions.length - 1
@@ -118,49 +123,104 @@ export function Survey<A extends Record<string, any>>({
     }
   };
 
+  // Resolve right panel: hidden > explicit content > image shorthand
+  const resolvedRightContent = hideRightPanel
+    ? undefined
+    : rightContent ?? (rightImage ? (
+        <div className="relative h-full w-full overflow-hidden rounded-2xl">
+          <img
+            src={rightImage}
+            alt=""
+            className="size-full object-cover"
+          />
+          <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-foreground/5" />
+        </div>
+      ) : undefined);
+
   if (!currentQuestion) return null;
 
+  const showBack = currentQuestionIndex > 0 || !!onBackFromFirstQuestion;
+  const showNext = !hideContinueButton && !!tempAnswer;
+  const progressPercent =
+    currentQuestionIndex >= 0 && totalQuestions
+      ? ((currentQuestionIndex + 1) / totalQuestions) * 100
+      : 0;
+
   return (
-    <SurveyShell
-      onBack={goToPrevious}
-      onNext={goToNext}
-      nextDisabled={!tempAnswer}
-      nextLabel="Continue"
-      showContinue
-      hideContinueButton={hideContinueButton}
-      currentQuestionIndex={currentQuestionIndex >= 0 ? currentQuestionIndex : 0}
-      totalQuestions={totalQuestions}
-      showProgress={showProgress}
-      customBackCondition={currentQuestionIndex > 0 || !!onBackFromFirstQuestion}
-      rightContent={rightContent}
-    >
-      <div className="flex flex-col gap-6" ref={containerRef}>
-        <SurveyQuestion
-          key={currentQuestion.id}
-          title={currentQuestion.title}
-          description={currentQuestion.description}
-          active
-          hideQuestionTitle={hideQuestionTitle}
-        >
-          <QuestionRenderer
-            question={currentQuestion}
-            attributes={attributes}
-            isActive
-            onEnter={goToNext}
-            onChange={(value: any) => {
-              setTempAnswer(value);
-              setValidationError("");
-            }}
-            value={tempAnswer}
-          />
-          {validationError && (
-            <Alert variant="destructive" className="mt-4">
-              <AlertCircle />
-              <AlertDescription>{validationError}</AlertDescription>
-            </Alert>
+    <SurveyShell className={className} rightContent={resolvedRightContent} logo={logo} logoUrl={logoUrl}>
+      <div ref={containerRef} className="max-w-lg">
+        {/* Progress bar */}
+        {showProgress && totalQuestions !== undefined && (
+          <div className="mb-4">
+            <Progress value={progressPercent} className="h-1.5 w-24" />
+          </div>
+        )}
+
+        {/* Question — fade + subtle slide on transition */}
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={currentQuestion.id}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -4 }}
+            transition={{ duration: 0.25, ease: [0.2, 0, 0, 1] }}
+          >
+            <SurveyQuestion
+              title={currentQuestion.title}
+              description={currentQuestion.description}
+              active
+              hideQuestionTitle={hideQuestionTitle}
+            >
+              <QuestionRenderer
+                question={currentQuestion}
+                attributes={attributes}
+                isActive
+                onEnter={goToNext}
+                onChange={(value: any) => {
+                  setTempAnswer(value);
+                  setValidationError("");
+                }}
+                value={tempAnswer}
+              />
+              {validationError && (
+                <Alert variant="destructive" className="mt-4">
+                  <AlertCircle />
+                  <AlertDescription>{validationError}</AlertDescription>
+                </Alert>
+              )}
+            </SurveyQuestion>
+          </motion.div>
+        </AnimatePresence>
+
+        {/* Back + Continue — desktop (always rendered to reserve space) */}
+        <div className="mt-8 hidden items-center justify-between md:flex">
+          {showBack ? (
+            <Button variant="outline" size="icon" className="min-h-10 min-w-10" onClick={goToPrevious} aria-label="Go back">
+              <ArrowLeft />
+            </Button>
+          ) : (
+            <div />
           )}
-        </SurveyQuestion>
+          <Button size="lg" onClick={goToNext} className={showNext ? "" : "invisible"}>
+            Continue
+          </Button>
+        </div>
       </div>
+
+      {/* Back + Continue — mobile fixed bottom, full width */}
+      {!hideContinueButton && (
+        <div className="fixed inset-x-0 bottom-0 z-10 flex gap-3 bg-gradient-to-t from-background via-background to-transparent px-8 pb-8 pt-6 md:hidden">
+          {showBack && (
+            <Button variant="outline" size="lg" className="flex-1" onClick={goToPrevious} aria-label="Go back">
+              <ArrowLeft />
+              Back
+            </Button>
+          )}
+          <Button size="lg" className="flex-1" onClick={goToNext} disabled={!showNext}>
+            Continue
+          </Button>
+        </div>
+      )}
     </SurveyShell>
   );
 }
