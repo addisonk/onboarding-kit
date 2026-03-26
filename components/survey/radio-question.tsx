@@ -126,7 +126,7 @@ export function RadioQuestion({
               <div className="relative z-10 flex flex-col items-center gap-1 text-center">
                 <span className="font-medium">{option.label}</span>
                 {option.description && (
-                  <span className="text-xs leading-tight text-muted-foreground">
+                  <span className="text-sm leading-snug text-muted-foreground">
                     {option.description}
                   </span>
                 )}
@@ -152,7 +152,7 @@ export function RadioQuestion({
             key={option.value}
             whileTap={disabled ? {} : { scale: 0.96 }}
             className={cn(
-              "group relative flex w-full cursor-pointer items-center justify-between overflow-hidden rounded-lg px-3 text-sm ring-1 transition-[box-shadow,ring-color]",
+              "group relative flex w-full cursor-pointer items-center justify-between overflow-hidden rounded-lg px-3 text-base ring-1 transition-[box-shadow,ring-color]",
               "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
               option.description ? "min-h-[60px] py-2.5" : "h-[50px]",
               isSelected
@@ -192,7 +192,7 @@ export function RadioQuestion({
               <span className="flex flex-col gap-0.5">
                 <span>{option.label}</span>
                 {option.description && (
-                  <span className="text-xs leading-tight text-muted-foreground">
+                  <span className="text-sm leading-snug text-muted-foreground">
                     {option.description}
                   </span>
                 )}

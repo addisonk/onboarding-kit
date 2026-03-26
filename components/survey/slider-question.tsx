@@ -48,7 +48,7 @@ export function SliderQuestion({
         disabled={disabled}
       />
       {(minLabel || maxLabel) && (
-        <div className="mt-2 flex items-center justify-between text-sm text-muted-foreground">
+        <div className="mt-3 flex items-center justify-between text-sm leading-none text-muted-foreground">
           <span>{minLabel}</span>
           <span>{maxLabel}</span>
         </div>

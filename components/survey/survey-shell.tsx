@@ -91,12 +91,12 @@ const SurveyQuestion = React.forwardRef<HTMLDivElement, SurveyQuestionProps>(
       {...props}
     >
       {!hideQuestionTitle && (
-        <h2 className={cn("max-w-lg text-2xl font-bold text-foreground text-wrap-balance", !description && "mb-6")}>
+        <h2 className={cn("max-w-lg text-2xl font-semibold tracking-tight text-foreground md:text-3xl", !description && "mb-6")}>
           {title}
         </h2>
       )}
       {description && (
-        <p className="mt-2 mb-6 max-w-lg text-muted-foreground text-wrap-pretty">
+        <p className="mt-2 mb-6 max-w-lg leading-relaxed text-muted-foreground">
           {description}
         </p>
       )}
