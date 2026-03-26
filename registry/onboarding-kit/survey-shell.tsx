@@ -47,7 +47,7 @@ const SurveyShell = React.forwardRef<HTMLDivElement, SurveyShellProps>(
           <div className="flex min-h-full flex-col">
             {/* Header — sticky top */}
             {hasHeader && (
-              <div className="sticky top-0 z-20 bg-muted px-8 pt-6 pb-3 dark:bg-background md:px-12 md:pt-8">
+              <div className="sticky top-0 z-20 bg-inherit px-8 pt-6 pb-3 md:px-12 md:pt-8">
                 <div className="mx-auto max-w-lg">
                   {resolvedLogo}
                   {showProgress && progressPercent !== undefined && (
@@ -64,7 +64,7 @@ const SurveyShell = React.forwardRef<HTMLDivElement, SurveyShellProps>(
 
             {/* Actions — sticky bottom (like StickyChatContainer) */}
             {actions && (
-              <div className="sticky bottom-0 z-20 bg-muted px-8 pb-6 pt-4 dark:bg-background md:px-12 md:pb-8">
+              <div className="sticky bottom-0 z-20 bg-inherit px-8 pb-6 pt-4 md:px-12 md:pb-8">
                 {actions}
               </div>
             )}

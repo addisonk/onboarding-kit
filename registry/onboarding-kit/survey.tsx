@@ -133,7 +133,7 @@ export function Survey<A extends Record<string, any>>({
     }
   };
 
-  // Resolve right panel: hidden > explicit content > image shorthand
+  // Resolve right panel: hidden > explicit content > image shorthand > default gradient
   const resolvedRightContent = hideRightPanel
     ? undefined
     : rightContent ?? (rightImage ? (
@@ -145,7 +145,11 @@ export function Survey<A extends Record<string, any>>({
           />
           <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-foreground/5" />
         </div>
-      ) : undefined);
+      ) : (
+        <div className="relative h-full w-full overflow-hidden rounded-2xl bg-gradient-to-tr from-primary via-primary to-primary/80">
+          <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-foreground/5" />
+        </div>
+      ));
 
   if (!currentQuestion) return null;
 
