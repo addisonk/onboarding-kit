@@ -22,7 +22,12 @@
         "alert",
         "scroll-area"
       ],
+      "categories": [
+        "onboarding",
+        "data-collection"
+      ],
       "files": [
+        { "path": "registry/onboarding-kit/page.tsx", "type": "registry:page", "target": "app/onboarding/page.tsx" },
         { "path": "registry/onboarding-kit/survey.tsx", "type": "registry:component", "target": "components/survey/survey.tsx" },
         { "path": "registry/onboarding-kit/survey-shell.tsx", "type": "registry:component", "target": "components/survey/survey-shell.tsx" },
         { "path": "registry/onboarding-kit/question-renderer.tsx", "type": "registry:component", "target": "components/survey/question-renderer.tsx" },
