@@ -1,0 +1,47 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "onboarding-kit",
+  "homepage": "https://the-onboarding-kit.vercel.app",
+  "items": [
+    {
+      "name": "onboarding-kit",
+      "type": "registry:block",
+      "title": "Onboarding Kit",
+      "description": "Drop-in onboarding flows for Next.js + shadcn/ui",
+      "dependencies": [
+        "framer-motion",
+        "zod"
+      ],
+      "registryDependencies": [
+        "button",
+        "card",
+        "input",
+        "textarea",
+        "progress",
+        "slider",
+        "alert",
+        "scroll-area"
+      ],
+      "files": [
+        { "path": "registry/onboarding-kit/survey.tsx", "type": "registry:component", "target": "components/survey/survey.tsx" },
+        { "path": "registry/onboarding-kit/survey-shell.tsx", "type": "registry:component", "target": "components/survey/survey-shell.tsx" },
+        { "path": "registry/onboarding-kit/question-renderer.tsx", "type": "registry:component", "target": "components/survey/question-renderer.tsx" },
+        { "path": "registry/onboarding-kit/radio-question.tsx", "type": "registry:component", "target": "components/survey/radio-question.tsx" },
+        { "path": "registry/onboarding-kit/card-checkbox-question.tsx", "type": "registry:component", "target": "components/survey/card-checkbox-question.tsx" },
+        { "path": "registry/onboarding-kit/rating-question.tsx", "type": "registry:component", "target": "components/survey/rating-question.tsx" },
+        { "path": "registry/onboarding-kit/slider-question.tsx", "type": "registry:component", "target": "components/survey/slider-question.tsx" },
+        { "path": "registry/onboarding-kit/text-input-question.tsx", "type": "registry:component", "target": "components/survey/text-input-question.tsx" },
+        { "path": "registry/onboarding-kit/textarea-question.tsx", "type": "registry:component", "target": "components/survey/textarea-question.tsx" },
+        { "path": "registry/onboarding-kit/check-indicator.tsx", "type": "registry:component", "target": "components/survey/check-indicator.tsx" },
+        { "path": "registry/onboarding-kit/types.ts", "type": "registry:component", "target": "components/survey/types.ts" },
+        { "path": "registry/onboarding-kit/utils.ts", "type": "registry:lib", "target": "components/survey/utils.ts" },
+        { "path": "registry/onboarding-kit/auto-advance-config.ts", "type": "registry:component", "target": "components/survey/auto-advance-config.ts" },
+        { "path": "registry/onboarding-kit/index.ts", "type": "registry:component", "target": "components/survey/index.ts" },
+        { "path": "registry/onboarding-kit/hooks/index.ts", "type": "registry:hook", "target": "components/survey/hooks/index.ts" },
+        { "path": "registry/onboarding-kit/hooks/use-current-question.ts", "type": "registry:hook", "target": "components/survey/hooks/use-current-question.ts" },
+        { "path": "registry/onboarding-kit/hooks/use-question-options.ts", "type": "registry:hook", "target": "components/survey/hooks/use-question-options.ts" },
+        { "path": "registry/onboarding-kit/hooks/use-question-state.ts", "type": "registry:hook", "target": "components/survey/hooks/use-question-state.ts" }
+      ]
+    }
+  ]
+}
