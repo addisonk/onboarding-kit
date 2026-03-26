@@ -29,7 +29,7 @@ const SurveyShell = React.forwardRef<HTMLDivElement, SurveyShellProps>(
     return (
       <div
         ref={ref}
-        className={cn("flex min-h-full w-full", className)}
+        className={cn("flex h-full w-full", className)}
         {...props}
       >
         {/*
@@ -40,7 +40,7 @@ const SurveyShell = React.forwardRef<HTMLDivElement, SurveyShellProps>(
         */}
         <div
           className={cn(
-            "relative",
+            "relative h-full overflow-y-auto",
             rightContent ? "w-full md:w-1/2" : "mx-auto w-full max-w-2xl"
           )}
         >
@@ -48,7 +48,7 @@ const SurveyShell = React.forwardRef<HTMLDivElement, SurveyShellProps>(
             {/* Header — sticky top */}
             {hasHeader && (
               <div className="sticky top-0 z-20 bg-inherit px-8 pt-6 pb-3 md:px-12 md:pt-8">
-                <div className="mx-auto max-w-lg">
+                <div className="mx-auto w-full max-w-lg">
                   {resolvedLogo}
                   {showProgress && progressPercent !== undefined && (
                     <Progress value={progressPercent} className="mt-2 h-1.5 w-24" />

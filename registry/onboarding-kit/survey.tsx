@@ -169,7 +169,7 @@ export function Survey<A extends Record<string, any>>({
       showProgress={showProgress}
       progressPercent={progressPercent}
       actions={
-        <div className="mx-auto max-w-lg">
+        <div className="mx-auto w-full max-w-lg">
           {/* Desktop */}
           <div className="hidden items-center justify-between md:flex">
             <Button variant="outline" size="icon" className={cn("min-h-10 min-w-10", showBack ? "" : "invisible")} onClick={goToPrevious} aria-label="Go back">
@@ -196,7 +196,7 @@ export function Survey<A extends Record<string, any>>({
         </div>
       }
     >
-      <div ref={containerRef} className="mx-auto max-w-lg py-6">
+      <div ref={containerRef} className="mx-auto w-full max-w-lg py-6">
         {/* Question — fade + subtle slide on transition */}
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
