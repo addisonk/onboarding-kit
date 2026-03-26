@@ -4,6 +4,8 @@ Drop-in onboarding flows for Next.js + shadcn/ui. Define steps as data, get stru
 
 [Live Demo](https://the-onboarding-kit.vercel.app)
 
+https://github.com/user-attachments/assets/bf8d53d3-ce95-44b4-b9bb-1f95a978fca4
+
 ## Install
 
 ```bash
