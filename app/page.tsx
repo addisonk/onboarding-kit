@@ -33,31 +33,7 @@ const questions: QuestionConfig<DemoAttributes>[] = [
     type: "info",
   },
 
-  // 2. Long radio list — tests scrolling behavior (moved to front for testing)
-  {
-    id: "longList",
-    title: "What industry are you in?",
-    description:
-      "A long list of options to demonstrate scrolling. The logo and progress bar stay sticky at the top.",
-    type: "radio",
-    variant: "button",
-    options: [
-      { value: "tech", label: "Technology" },
-      { value: "healthcare", label: "Healthcare" },
-      { value: "finance", label: "Finance & Banking" },
-      { value: "education", label: "Education" },
-      { value: "ecommerce", label: "E-commerce & Retail" },
-      { value: "media", label: "Media & Entertainment" },
-      { value: "real-estate", label: "Real Estate" },
-      { value: "manufacturing", label: "Manufacturing" },
-      { value: "legal", label: "Legal Services" },
-      { value: "nonprofit", label: "Non-profit" },
-      { value: "government", label: "Government" },
-      { value: "other", label: "Other" },
-    ],
-  },
-
-  // 3. Radio buttons — vertical list, single select
+  // 2. Radio buttons — vertical list, single select
   {
     id: "radioButtons",
     title: "Radio Buttons",
@@ -137,7 +113,31 @@ const questions: QuestionConfig<DemoAttributes>[] = [
     ratingProps: { max: 5 },
   },
 
-  // 9. Boolean — yes/no
+  // 9. Long radio list — demonstrates scrolling behavior
+  {
+    id: "longList",
+    title: "What industry are you in?",
+    description:
+      "A long list of options to demonstrate scrolling. The logo and progress bar stay sticky at the top.",
+    type: "radio",
+    variant: "button",
+    options: [
+      { value: "tech", label: "Technology" },
+      { value: "healthcare", label: "Healthcare" },
+      { value: "finance", label: "Finance & Banking" },
+      { value: "education", label: "Education" },
+      { value: "ecommerce", label: "E-commerce & Retail" },
+      { value: "media", label: "Media & Entertainment" },
+      { value: "real-estate", label: "Real Estate" },
+      { value: "manufacturing", label: "Manufacturing" },
+      { value: "legal", label: "Legal Services" },
+      { value: "nonprofit", label: "Non-profit" },
+      { value: "government", label: "Government" },
+      { value: "other", label: "Other" },
+    ],
+  },
+
+  // 10. Boolean — yes/no
   {
     id: "booleanChoice",
     title: "Boolean (Yes / No)",
