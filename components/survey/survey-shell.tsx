@@ -48,10 +48,12 @@ const SurveyShell = React.forwardRef<HTMLDivElement, SurveyShellProps>(
             {/* Header — sticky top */}
             {hasHeader && (
               <div className="sticky top-0 z-20 bg-muted px-8 pt-6 pb-3 dark:bg-background md:px-12 md:pt-8">
-                {resolvedLogo}
-                {showProgress && progressPercent !== undefined && (
-                  <Progress value={progressPercent} className="mt-2 h-1.5 w-24" />
-                )}
+                <div className="max-w-lg">
+                  {resolvedLogo}
+                  {showProgress && progressPercent !== undefined && (
+                    <Progress value={progressPercent} className="mt-2 h-1.5 w-24" />
+                  )}
+                </div>
               </div>
             )}
 
