@@ -11,7 +11,7 @@ export function ThemeToggle() {
   };
 
   return (
-    <Button onClick={toggleTheme} size="icon" variant="ghost">
+    <Button onClick={toggleTheme} size="icon" variant="ghost" className="text-foreground">
       <svg
         aria-hidden="true"
         className="size-4"

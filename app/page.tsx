@@ -228,7 +228,7 @@ export default function Home() {
                 href="https://github.com/addisonk/onboarding-kit"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rounded-md p-2 text-muted-foreground transition-colors hover:text-foreground"
+                className="rounded-md p-2 text-foreground"
                 aria-label="View on GitHub"
               >
                 <svg viewBox="0 0 16 16" className="size-4" fill="currentColor">
