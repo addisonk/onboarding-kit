@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { z } from "zod";
-import { Survey } from "@/components/survey";
-import type { QuestionConfig } from "@/components/survey";
+import { Survey } from "@/components/survey/survey";
+import type { QuestionConfig } from "@/components/survey/survey-types";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 /* ── Define your survey shape ─────────────────────────────────────────── */

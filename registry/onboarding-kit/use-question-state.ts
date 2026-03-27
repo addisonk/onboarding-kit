@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import type { QuestionConfig } from "../types";
+import type { QuestionConfig } from "@/components/survey/survey-types";
 
 export interface QuestionState {
   isOptional: boolean;

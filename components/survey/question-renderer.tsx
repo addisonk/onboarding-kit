@@ -6,8 +6,8 @@ import { RadioQuestion } from "./radio-question";
 import { CardCheckboxQuestion } from "./card-checkbox-question";
 import { SliderQuestion } from "./slider-question";
 import { RatingQuestion } from "./rating-question";
-import type { QuestionConfig, CardOption } from "./types";
-import { useQuestionOptions } from "./hooks/use-question-options";
+import type { QuestionConfig, CardOption } from "./survey-types";
+import { useQuestionOptions } from "@/hooks/use-question-options";
 
 interface QuestionRendererProps<A = any> {
   question: QuestionConfig<A>;

@@ -4,7 +4,7 @@ import type {
   OptionsLoadingState,
   BaseOption,
   SyncOptionsFunction,
-} from "../types";
+} from "@/components/survey/survey-types";
 
 export function useQuestionOptions<T extends BaseOption, A = any>(
   question: QuestionConfig<A>,

@@ -7,7 +7,7 @@ import { CheckIndicator } from "./check-indicator";
 import {
   AUTO_ADVANCE_CONFIG,
   PROGRESS_BAR_ANIMATION,
-} from "./auto-advance-config";
+} from "./survey-config";
 interface RadioOption {
   value: string;
   label: string;

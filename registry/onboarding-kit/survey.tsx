@@ -7,10 +7,10 @@ import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { SurveyShell, SurveyQuestion } from "./survey-shell";
 import { QuestionRenderer } from "./question-renderer";
-import { useCurrentQuestion } from "./hooks/use-current-question";
+import { useCurrentQuestion } from "@/hooks/use-current-question";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import type { QuestionConfig } from "./types";
+import type { QuestionConfig } from "./survey-types";
 
 export interface SurveyProps<A extends Record<string, any>> {
   questions: QuestionConfig<A>[];

@@ -1,5 +1,5 @@
 import { useMemo, useCallback, useState } from "react";
-import type { QuestionConfig } from "../types";
+import type { QuestionConfig } from "@/components/survey/survey-types";
 
 /**
  * Manages which question is currently active.
