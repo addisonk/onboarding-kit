@@ -84,12 +84,12 @@ export function RadioQuestion({
               key={option.value}
               whileTap={disabled ? {} : { scale: 0.96 }}
               className={cn(
-                "group relative flex cursor-pointer flex-col items-center justify-center overflow-hidden rounded-xl p-6 ring-1 transition-[box-shadow,ring-color]",
+                "group relative flex cursor-pointer flex-col items-center justify-center overflow-hidden rounded-xl bg-card p-6 ring-1 transition-[box-shadow,ring-color]",
                 "min-h-[160px]",
                 "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
                 isSelected
                   ? "ring-primary shadow-sm"
-                  : "ring-border hover:ring-primary/40 shadow-[0_1px_2px_0_rgb(0_0_0/0.04)]",
+                  : "ring-foreground/10 hover:ring-primary/40 shadow-[0_1px_2px_0_rgb(0_0_0/0.04)]",
                 disabled && "cursor-not-allowed opacity-60"
               )}
               onClick={() => handleSelect(option.value)}
@@ -149,12 +149,12 @@ export function RadioQuestion({
             key={option.value}
             whileTap={disabled ? {} : { scale: 0.96 }}
             className={cn(
-              "group relative flex w-full cursor-pointer items-center justify-between overflow-hidden rounded-lg px-3 text-base ring-1 transition-[box-shadow,ring-color]",
+              "group relative flex w-full cursor-pointer items-center justify-between overflow-hidden rounded-xl bg-card px-3 text-base ring-1 transition-[box-shadow,ring-color]",
               "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
               option.description ? "min-h-[60px] py-2.5" : "h-[50px]",
               isSelected
                 ? "ring-primary shadow-sm"
-                : "ring-border bg-card hover:ring-primary/40 shadow-[0_1px_2px_0_rgb(0_0_0/0.04)]",
+                : "ring-foreground/10 hover:ring-primary/40 shadow-[0_1px_2px_0_rgb(0_0_0/0.04)]",
               disabled && "cursor-not-allowed opacity-60"
             )}
             onClick={() => handleSelect(option.value)}

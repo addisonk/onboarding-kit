@@ -146,7 +146,12 @@ export function Survey<A extends Record<string, any>>({
           <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-foreground/5" />
         </div>
       ) : (
-        <div className="relative h-full w-full overflow-hidden rounded-2xl bg-gradient-to-tr from-primary via-primary to-primary/80">
+        <div className="relative h-full w-full overflow-hidden rounded-2xl bg-muted">
+          <img
+            src="/placeholder.svg"
+            alt=""
+            className="absolute inset-0 h-full w-full object-cover dark:invert"
+          />
           <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-foreground/5" />
         </div>
       ));

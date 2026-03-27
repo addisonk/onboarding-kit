@@ -238,7 +238,6 @@ export default function Home() {
             </div>
           </div>
         }
-        rightImage="/right-panel.png"
         hideRightPanel={hidePanel}
         className=""
       />
