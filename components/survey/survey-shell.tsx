@@ -29,7 +29,7 @@ const SurveyShell = React.forwardRef<HTMLDivElement, SurveyShellProps>(
     return (
       <div
         ref={ref}
-        className={cn("flex h-full w-full", className)}
+        className={cn("flex min-h-full w-full", className)}
         {...props}
       >
         {/*
@@ -40,7 +40,7 @@ const SurveyShell = React.forwardRef<HTMLDivElement, SurveyShellProps>(
         */}
         <div
           className={cn(
-            "relative h-full overflow-y-auto",
+            "relative",
             rightContent ? "w-full md:w-1/2" : "mx-auto w-full max-w-2xl"
           )}
         >
