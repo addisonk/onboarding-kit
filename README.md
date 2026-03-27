@@ -24,8 +24,8 @@ This installs all components, hooks, and dependencies (Framer Motion, Zod, and r
 
 ```tsx
 import { useState } from "react";
-import { Survey } from "@/components/survey";
-import type { QuestionConfig } from "@/components/survey";
+import { Survey } from "@/components/survey/survey";
+import type { QuestionConfig } from "@/components/survey/survey-types";
 
 interface Attrs {
   name?: string;

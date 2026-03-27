@@ -28,16 +28,6 @@ export interface OptionsLoadingState<T = BaseOption> {
   error: string | null;
 }
 
-export type MaxWidth =
-  | "xs"
-  | "sm"
-  | "md"
-  | "lg"
-  | "xl"
-  | "2xl"
-  | "3xl"
-  | false;
-
 export interface QuestionConfig<A = any> {
   id: keyof A & string;
   title: string;
@@ -46,7 +36,6 @@ export interface QuestionConfig<A = any> {
   options?: QuestionOptions<any, A>;
   condition?: (attributes: A) => boolean;
   optional?: boolean;
-  maxWidth?: MaxWidth;
   /** Radio display style — "button" (vertical list) or "card" (2-col grid). */
   variant?: "button" | "card";
   /** Static placeholder for text inputs. */

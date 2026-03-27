@@ -4,10 +4,7 @@ import { useState, type KeyboardEvent, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { CheckIndicator } from "./check-indicator";
-import {
-  AUTO_ADVANCE_CONFIG,
-  PROGRESS_BAR_ANIMATION,
-} from "./survey-config";
+import { AUTO_ADVANCE_CONFIG } from "./survey-config";
 interface RadioOption {
   value: string;
   label: string;
