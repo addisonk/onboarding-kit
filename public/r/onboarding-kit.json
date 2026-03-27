@@ -2,7 +2,7 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "onboarding-kit",
   "title": "Onboarding Kit",
-  "description": "Drop-in onboarding flows for Next.js + shadcn/ui",
+  "description": "A multi-step onboarding flow with conditional logic and validation.",
   "dependencies": [
     "framer-motion",
     "zod"
@@ -20,9 +20,15 @@
   "files": [
     {
       "path": "registry/onboarding-kit/page.tsx",
-      "content": "\"use client\";\n\nimport { useState } from \"react\";\nimport { Survey } from \"@/components/survey\";\nimport type { QuestionConfig } from \"@/components/survey\";\n\ninterface Attrs {\n  name?: string;\n  role?: string;\n  goal?: string;\n}\n\nconst steps: QuestionConfig<Attrs>[] = [\n  {\n    id: \"name\",\n    title: \"What's your name?\",\n    type: \"text\",\n    placeholder: \"Jane Doe\",\n  },\n  {\n    id: \"role\",\n    title: \"What's your role?\",\n    type: \"radio\",\n    variant: \"button\",\n    options: [\n      { value: \"engineer\", label: \"Engineer\" },\n      { value: \"designer\", label: \"Designer\" },\n      { value: \"pm\", label: \"Product Manager\" },\n      { value: \"founder\", label: \"Founder\" },\n    ],\n  },\n  {\n    id: \"goal\",\n    title: \"What are you building?\",\n    type: \"textarea\",\n    placeholder: \"Tell us about your project...\",\n  },\n];\n\nexport default function OnboardingPage() {\n  const [attrs, setAttrs] = useState<Attrs>({});\n  const [done, setDone] = useState(false);\n\n  if (done) {\n    return (\n      <div className=\"flex h-svh items-center justify-center p-8\">\n        <div className=\"w-full max-w-lg text-center\">\n          <h1 className=\"text-2xl font-bold\">Welcome, {attrs.name}!</h1>\n          <p className=\"mt-2 text-muted-foreground\">Onboarding complete.</p>\n          <pre className=\"mt-4 overflow-auto rounded bg-muted p-4 text-left text-sm\">\n            {JSON.stringify(attrs, null, 2)}\n          </pre>\n        </div>\n      </div>\n    );\n  }\n\n  return (\n    <div className=\"h-svh\">\n      <Survey\n        questions={steps}\n        attributes={attrs}\n        onAttributeChange={setAttrs}\n        onComplete={(final) => {\n          setAttrs(final);\n          setDone(true);\n        }}\n        showProgress\n        logo={<span className=\"text-lg font-bold tracking-tight\">My App</span>}\n      />\n    </div>\n  );\n}\n",
+      "content": "import { OnboardingForm } from \"@/registry/onboarding-kit/onboarding-form\"\n\nexport default function OnboardingPage() {\n  return (\n    <div className=\"h-svh\">\n      <OnboardingForm />\n    </div>\n  )\n}\n",
       "type": "registry:page",
       "target": "app/onboarding/page.tsx"
+    },
+    {
+      "path": "registry/onboarding-kit/onboarding-form.tsx",
+      "content": "\"use client\";\n\nimport { useState } from \"react\";\nimport { Survey } from \"@/components/survey\";\nimport type { QuestionConfig } from \"@/components/survey\";\n\ninterface Attrs {\n  name?: string;\n  role?: string;\n  goal?: string;\n}\n\nconst steps: QuestionConfig<Attrs>[] = [\n  {\n    id: \"name\",\n    title: \"What's your name?\",\n    type: \"text\",\n    placeholder: \"Jane Doe\",\n  },\n  {\n    id: \"role\",\n    title: \"What's your role?\",\n    type: \"radio\",\n    variant: \"button\",\n    options: [\n      { value: \"engineer\", label: \"Engineer\" },\n      { value: \"designer\", label: \"Designer\" },\n      { value: \"pm\", label: \"Product Manager\" },\n      { value: \"founder\", label: \"Founder\" },\n    ],\n  },\n  {\n    id: \"goal\",\n    title: \"What are you building?\",\n    type: \"textarea\",\n    placeholder: \"Tell us about your project...\",\n  },\n];\n\nexport function OnboardingForm() {\n  const [attrs, setAttrs] = useState<Attrs>({});\n  const [done, setDone] = useState(false);\n\n  if (done) {\n    return (\n      <div className=\"flex h-svh items-center justify-center p-8\">\n        <div className=\"w-full max-w-lg text-center\">\n          <h1 className=\"text-2xl font-bold\">Welcome, {attrs.name}!</h1>\n          <p className=\"mt-2 text-muted-foreground\">Onboarding complete.</p>\n          <pre className=\"mt-4 overflow-auto rounded bg-muted p-4 text-left text-sm\">\n            {JSON.stringify(attrs, null, 2)}\n          </pre>\n        </div>\n      </div>\n    );\n  }\n\n  return (\n    <Survey\n      questions={steps}\n      attributes={attrs}\n      onAttributeChange={setAttrs}\n      onComplete={(final) => {\n        setAttrs(final);\n        setDone(true);\n      }}\n      showProgress\n      logo={<span className=\"text-lg font-bold tracking-tight\">My App</span>}\n    />\n  );\n}\n",
+      "type": "registry:component",
+      "target": "components/survey/onboarding-form.tsx"
     },
     {
       "path": "registry/onboarding-kit/survey.tsx",

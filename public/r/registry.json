@@ -7,7 +7,7 @@
       "name": "onboarding-kit",
       "type": "registry:block",
       "title": "Onboarding Kit",
-      "description": "Drop-in onboarding flows for Next.js + shadcn/ui",
+      "description": "A multi-step onboarding flow with conditional logic and validation.",
       "dependencies": [
         "framer-motion",
         "zod"
@@ -28,6 +28,7 @@
       ],
       "files": [
         { "path": "registry/onboarding-kit/page.tsx", "type": "registry:page", "target": "app/onboarding/page.tsx" },
+        { "path": "registry/onboarding-kit/onboarding-form.tsx", "type": "registry:component", "target": "components/survey/onboarding-form.tsx" },
         { "path": "registry/onboarding-kit/survey.tsx", "type": "registry:component", "target": "components/survey/survey.tsx" },
         { "path": "registry/onboarding-kit/survey-shell.tsx", "type": "registry:component", "target": "components/survey/survey-shell.tsx" },
         { "path": "registry/onboarding-kit/question-renderer.tsx", "type": "registry:component", "target": "components/survey/question-renderer.tsx" },
