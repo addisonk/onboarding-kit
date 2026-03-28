@@ -32,7 +32,7 @@ export function SliderQuestion({
 
   return (
     <div className={cn("w-full", className)}>
-      <div className="mb-6 text-center text-3xl font-bold tabular-nums text-foreground">
+      <div className="mb-6 text-center font-heading text-3xl font-bold tabular-nums text-foreground">
         {safeValue}
       </div>
       <Slider

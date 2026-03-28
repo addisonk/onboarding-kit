@@ -5,12 +5,14 @@ import { z } from "zod";
 import { Survey } from "@/components/survey/survey";
 import type { QuestionConfig } from "@/components/survey/survey-types";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { Triangle, Square, Circle, Diamond } from "lucide-react";
 
 /* ── Define your survey shape ─────────────────────────────────────────── */
 
 interface DemoAttributes {
   _intro?: string;
   teamSize?: string;
+  style?: string;
   goals?: string[];
   projectName?: string;
   context?: string;
@@ -42,6 +44,20 @@ const questions: QuestionConfig<DemoAttributes>[] = [
       { value: "small", label: "2–10 people", description: "Small team, moving fast" },
       { value: "growing", label: "11–50 people", description: "Scaling with process" },
       { value: "large", label: "50+ people", description: "Established organization" },
+    ],
+  },
+
+  {
+    id: "style",
+    title: "Pick a style",
+    description: "This helps us set up your workspace.",
+    type: "radio",
+    variant: "card",
+    options: [
+      { value: "minimal", label: "Minimal", icon: Circle, description: "Clean and simple" },
+      { value: "structured", label: "Structured", icon: Square, description: "Organized layouts" },
+      { value: "dynamic", label: "Dynamic", icon: Triangle, description: "Bold and flexible" },
+      { value: "custom", label: "Custom", icon: Diamond, description: "Build your own" },
     ],
   },
 
