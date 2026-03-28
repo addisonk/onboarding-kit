@@ -230,7 +230,6 @@ export default function Home() {
           </div>
         }
         hideRightPanel={hidePanel}
-        className=""
       />
 
       {/* Layout toggle — top right, over the panel */}

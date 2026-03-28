@@ -19,8 +19,7 @@
         "textarea",
         "progress",
         "slider",
-        "alert",
-        "scroll-area"
+        "alert"
       ],
       "categories": [
         "onboarding",
@@ -42,8 +41,7 @@
         { "path": "registry/onboarding-kit/survey-types.ts", "type": "registry:component", "target": "components/survey/survey-types.ts" },
         { "path": "registry/onboarding-kit/survey-config.ts", "type": "registry:component", "target": "components/survey/survey-config.ts" },
         { "path": "registry/onboarding-kit/use-current-question.ts", "type": "registry:hook", "target": "hooks/use-current-question.ts" },
-        { "path": "registry/onboarding-kit/use-question-options.ts", "type": "registry:hook", "target": "hooks/use-question-options.ts" },
-        { "path": "registry/onboarding-kit/use-question-state.ts", "type": "registry:hook", "target": "hooks/use-question-state.ts" }
+        { "path": "registry/onboarding-kit/use-question-options.ts", "type": "registry:hook", "target": "hooks/use-question-options.ts" }
       ]
     }
   ]

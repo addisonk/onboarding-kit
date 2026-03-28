@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Star } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { AUTO_ADVANCE_CONFIG } from "./survey-config";
 
 interface RatingQuestionProps {
   id: string;
@@ -30,7 +31,7 @@ export function RatingQuestion({
     if (disabled) return;
     onChange(rating);
     if (onAutoAdvance) {
-      setTimeout(onAutoAdvance, 400);
+      setTimeout(onAutoAdvance, AUTO_ADVANCE_CONFIG.TOTAL_DELAY);
     }
   };
 

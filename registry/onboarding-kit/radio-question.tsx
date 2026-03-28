@@ -25,6 +25,7 @@ interface RadioQuestionProps {
 }
 
 export function RadioQuestion({
+  id,
   options,
   value,
   onChange,
@@ -71,6 +72,7 @@ export function RadioQuestion({
     return (
       <div
         role="radiogroup"
+        aria-label={id}
         className={cn(
           "grid grid-cols-2 gap-4",
           className
@@ -139,6 +141,7 @@ export function RadioQuestion({
   return (
     <div
       role="radiogroup"
+      aria-label={id}
       className={cn("flex flex-col gap-3", className)}
     >
       {options.map((option) => {

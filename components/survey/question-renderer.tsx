@@ -62,8 +62,6 @@ export function QuestionRenderer<A>({
           onEnter={isActive ? onEnter : undefined}
           disabled={!isActive}
           type="number"
-          min={18}
-          max={120}
         />
       );
 

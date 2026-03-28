@@ -22,6 +22,7 @@ interface CardCheckboxQuestionProps {
 }
 
 export function CardCheckboxQuestion({
+  id,
   options,
   values,
   onChange,
@@ -40,6 +41,8 @@ export function CardCheckboxQuestion({
 
   return (
     <div
+      role="group"
+      aria-label={id}
       className={cn(
         "grid gap-4",
         columns === 1 ? "grid-cols-1" : "grid-cols-2",
