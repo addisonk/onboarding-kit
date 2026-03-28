@@ -10,90 +10,76 @@ import { ThemeToggle } from "@/components/theme-toggle";
 
 interface DemoAttributes {
   _intro?: string;
-  radioCards?: string;
-  radioButtons?: string;
-  longList?: string;
-  multiSelect?: string[];
-  textInput?: string;
-  textareaInput?: string;
-  sliderValue?: number;
-  ratingValue?: number;
-  booleanChoice?: boolean;
-  conditionalFollow?: string;
+  teamSize?: string;
+  goals?: string[];
+  projectName?: string;
+  context?: string;
+  likelihood?: number;
+  experience?: number;
+  industry?: string;
+  hasTeam?: boolean;
+  teamStructure?: string;
 }
 
-/* ── Questions that demo every feature ────────────────────────────────── */
+/* ── Questions ────────────────────────────────────────────────────────── */
 
 const questions: QuestionConfig<DemoAttributes>[] = [
-  // 1. Intro — text-only welcome screen, just a continue button
   {
     id: "_intro",
-    title: "Welcome to Onboarding Kit",
+    title: "Let's set up your account",
     description:
-      "A plug-and-play survey component for Next.js + shadcn. This demo walks you through every question type the library supports. Hit continue to start.",
+      "We'll ask a few quick questions to personalize your experience. Takes about 30 seconds.",
     type: "info",
   },
 
-  // 2. Radio buttons — vertical list, single select
   {
-    id: "radioButtons",
-    title: "Radio Buttons",
-    description:
-      'type: "radio" with variant: "button" (default). A vertical list with optional descriptions. Also auto-advances on select.',
+    id: "teamSize",
+    title: "How large is your team?",
     type: "radio",
     variant: "button",
     options: [
-      { value: "sm", label: "Small (1–10)", description: "Early stage or personal project" },
-      { value: "md", label: "Medium (11–100)", description: "Growing team with structure" },
-      { value: "lg", label: "Large (100+)", description: "Enterprise-scale organization" },
+      { value: "solo", label: "Just me", description: "Solo founder or freelancer" },
+      { value: "small", label: "2–10 people", description: "Small team, moving fast" },
+      { value: "growing", label: "11–50 people", description: "Scaling with process" },
+      { value: "large", label: "50+ people", description: "Established organization" },
     ],
   },
 
-  // 4. Card checkbox — multi-select grid
   {
-    id: "multiSelect",
-    title: "Multi-Select Cards",
-    description:
-      'type: "card-checkbox". Users can select multiple options. Validated with Zod to require at least one.',
+    id: "goals",
+    title: "What are you looking to build?",
+    description: "Select all that apply.",
     type: "card-checkbox",
     options: [
-      { value: "onboarding", label: "Onboarding", description: "New user sign-up flows" },
-      { value: "feedback", label: "Feedback", description: "NPS, CSAT, product surveys" },
-      { value: "quiz", label: "Quiz", description: "Knowledge checks & assessments" },
-      { value: "checkout", label: "Checkout", description: "Pre-purchase qualification" },
+      { value: "onboarding", label: "User Onboarding", description: "Welcome new signups" },
+      { value: "waitlist", label: "Waitlist", description: "Capture early interest" },
+      { value: "feedback", label: "Feedback", description: "Collect NPS or CSAT" },
+      { value: "intake", label: "Intake Form", description: "Qualify leads or clients" },
     ],
     validationSchema: z.array(z.string()).min(1),
-    validationErrorMessage: "Select at least one use case",
+    validationErrorMessage: "Pick at least one",
   },
 
-  // 5. Text input — with placeholder
   {
-    id: "textInput",
-    title: "Text Input",
-    description:
-      'type: "text". Supports custom placeholder, Zod validation, and an animated arrow button that appears when you type 2+ characters.',
+    id: "projectName",
+    title: "What's your project called?",
     type: "text",
-    placeholder: "eg. My Awesome Survey",
+    placeholder: "Acme Inc",
     validationSchema: z.string().min(1).max(100),
-    validationErrorMessage: "Please type something",
+    validationErrorMessage: "Give your project a name",
   },
 
-  // 6. Textarea — long-form text
   {
-    id: "textareaInput",
-    title: "Textarea",
-    description:
-      'type: "textarea". Multi-line input using shadcn\'s Textarea component. Great for feedback, comments, or open-ended responses.',
+    id: "context",
+    title: "Anything else we should know?",
+    description: "Optional — share context about your project or what you're hoping to achieve.",
     type: "textarea",
-    placeholder: "Tell us what you think...",
+    placeholder: "We're launching a new product next month and need to onboard beta users...",
   },
 
-  // 7. Slider — numeric range
   {
-    id: "sliderValue",
-    title: "Slider",
-    description:
-      'type: "slider". Uses shadcn\'s Slider component. Configurable min, max, step, and endpoint labels.',
+    id: "likelihood",
+    title: "How likely are you to recommend us?",
     type: "slider",
     sliderProps: {
       min: 0,
@@ -104,22 +90,16 @@ const questions: QuestionConfig<DemoAttributes>[] = [
     },
   },
 
-  // 8. Rating — star rating
   {
-    id: "ratingValue",
-    title: "Star Rating",
-    description:
-      'type: "rating". Interactive star rating with hover preview. Configurable number of stars (default 5). Auto-advances on selection.',
+    id: "experience",
+    title: "How's the experience so far?",
     type: "rating",
     ratingProps: { max: 5 },
   },
 
-  // 9. Long radio list — demonstrates scrolling behavior
   {
-    id: "longList",
+    id: "industry",
     title: "What industry are you in?",
-    description:
-      "A long list of options to demonstrate scrolling. The logo and progress bar stay sticky at the top.",
     type: "radio",
     variant: "button",
     options: [
@@ -138,28 +118,23 @@ const questions: QuestionConfig<DemoAttributes>[] = [
     ],
   },
 
-  // 10. Boolean — yes/no
   {
-    id: "booleanChoice",
-    title: "Boolean (Yes / No)",
-    description:
-      'type: "boolean". Renders as two radio buttons: Yes and No. The value is stored as a true/false boolean.',
+    id: "hasTeam",
+    title: "Will other people use this with you?",
     type: "boolean",
   },
 
-  // 10. Conditional question — only shows if they said Yes above
   {
-    id: "conditionalFollow",
-    title: "Conditional Question",
-    description:
-      "This question only appears because you selected Yes on the previous step. Questions can have a condition function that controls visibility.",
+    id: "teamStructure",
+    title: "How is your team organized?",
+    description: "This helps us tailor the collaboration features.",
     type: "radio",
     variant: "button",
-    condition: (attrs) => attrs.booleanChoice === true,
+    condition: (attrs) => attrs.hasTeam === true,
     options: [
-      { value: "router", label: "URL-based (Next.js router)" },
-      { value: "state", label: "State-based (useState)" },
-      { value: "both", label: "Both — let me decide per survey" },
+      { value: "flat", label: "Flat — everyone does everything" },
+      { value: "departments", label: "By department (eng, design, product)" },
+      { value: "squads", label: "Cross-functional squads" },
     ],
   },
 ];
