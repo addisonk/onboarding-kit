@@ -21,7 +21,7 @@
       "path": "registry/onboarding-kit/page.tsx",
       "content": "import { OnboardingForm } from \"@/registry/onboarding-kit/onboarding-form\"\n\nexport default function OnboardingPage() {\n  return (\n    <div className=\"h-svh overflow-y-auto\">\n      <OnboardingForm />\n    </div>\n  )\n}\n",
       "type": "registry:page",
-      "target": "app/onboarding/page.tsx"
+      "target": "app/onboarding-kit/page.tsx"
     },
     {
       "path": "registry/onboarding-kit/onboarding-form.tsx",
