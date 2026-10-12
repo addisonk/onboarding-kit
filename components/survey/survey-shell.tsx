@@ -11,7 +11,11 @@ export interface SurveyShellProps extends React.HTMLAttributes<HTMLDivElement> {
   rightContent?: React.ReactNode;
   logoUrl?: string;
   logo?: React.ReactNode;
+  /** Progress indicator rendered under the logo. */
+  progress?: React.ReactNode;
+  /** @deprecated Pass `progress` instead. */
   showProgress?: boolean;
+  /** @deprecated Pass `progress` instead. */
   progressPercent?: number;
   actions?: React.ReactNode;
 }
@@ -19,12 +23,18 @@ export interface SurveyShellProps extends React.HTMLAttributes<HTMLDivElement> {
 /* -------------------------------- Component ------------------------------- */
 
 const SurveyShell = React.forwardRef<HTMLDivElement, SurveyShellProps>(
-  ({ className, children, rightContent, logoUrl, logo, showProgress, progressPercent, actions, ...props }, ref) => {
+  ({ className, children, rightContent, logoUrl, logo, progress, showProgress, progressPercent, actions, ...props }, ref) => {
     const resolvedLogo = logo ?? (logoUrl ? (
       <img src={logoUrl} alt="Logo" className="max-h-8 w-auto" />
     ) : null);
 
-    const hasHeader = resolvedLogo || (showProgress && progressPercent !== undefined);
+    const resolvedProgress =
+      progress ??
+      (showProgress && progressPercent !== undefined ? (
+        <Progress value={progressPercent} className="mt-2 h-1.5 w-24" />
+      ) : null);
+
+    const hasHeader = resolvedLogo || resolvedProgress;
 
     return (
       <div
@@ -50,9 +60,7 @@ const SurveyShell = React.forwardRef<HTMLDivElement, SurveyShellProps>(
               <div className="sticky top-0 z-20 bg-inherit px-8 pt-6 pb-3 md:px-12 md:pt-8">
                 <div className="mx-auto w-full max-w-lg">
                   {resolvedLogo}
-                  {showProgress && progressPercent !== undefined && (
-                    <Progress value={progressPercent} className="mt-2 h-1.5 w-24" />
-                  )}
+                  {resolvedProgress}
                 </div>
               </div>
             )}
