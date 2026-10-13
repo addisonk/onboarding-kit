@@ -59,8 +59,8 @@ export interface SurveyProps<A extends Record<string, any>> {
 const isEnabled = <A,>(question: QuestionConfig<A>, attributes: A) =>
   !question.condition || question.condition(attributes);
 
-const isRequired = <A,>(question: QuestionConfig<A>) =>
-  !question.optional && question.type !== "info";
+// Info screens are required too: their hidden answer is always present, so Skip never shows.
+const isRequired = <A,>(question: QuestionConfig<A>) => !question.optional;
 
 const sliderMidpoint = <A,>(question: QuestionConfig<A>) => {
   const min = question.sliderProps?.min ?? 0;
@@ -244,6 +244,7 @@ export function Survey<A extends Record<string, any>>({
     >
       <SurveyShell
         ref={shellRef}
+        className="flex-1"
         rightContent={resolvedRightContent}
         logo={logo}
         logoUrl={logoUrl}

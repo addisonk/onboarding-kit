@@ -74,8 +74,14 @@ export function SliderQuestion({
         max={max}
         step={step}
         disabled={disabled}
-        aria-label={ariaLabel}
+        // The root passes aria-labelledby on to the thumb; aria-label would stop at the root.
+        aria-labelledby={ariaLabel ? `${id}-label` : undefined}
       />
+      {ariaLabel && (
+        <span id={`${id}-label`} className="sr-only">
+          {ariaLabel}
+        </span>
+      )}
       <QuestionnairePrimitive.Input
         type="number"
         value={String(safeValue)}
