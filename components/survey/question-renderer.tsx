@@ -1,5 +1,6 @@
 "use client";
 
+import { Questionnaire as QuestionnairePrimitive } from "@shadcn/react/questionnaire";
 import { TextInputQuestion } from "./text-input-question";
 import { TextareaQuestion } from "./textarea-question";
 import { RadioQuestion } from "./radio-question";
@@ -12,21 +13,28 @@ import { useQuestionOptions } from "@/hooks/use-question-options";
 interface QuestionRendererProps<A = any> {
   question: QuestionConfig<A>;
   attributes: A;
+  /** Whether this is the question on screen. */
   isActive: boolean;
-  onEnter?: () => void;
-  onChange: (value: any) => void;
   value: any;
+  onChange: (value: any) => void;
+  /** Schedules auto-advance after a pointer selection on single-choice questions. */
+  onAutoAdvance?: () => void;
+  /** Continues from a text answer (the inline arrow button). */
+  onSubmitText?: () => void;
 }
 
+/** The answer control for one question, built from Questionnaire parts. */
 export function QuestionRenderer<A>({
   question,
   attributes,
   isActive,
-  onEnter,
-  onChange,
   value,
+  onChange,
+  onAutoAdvance,
+  onSubmitText,
 }: QuestionRendererProps<A>) {
   const { options, error } = useQuestionOptions(question, attributes);
+  const inputId = `survey-${question.id}`;
 
   if (error) {
     return (
@@ -38,45 +46,50 @@ export function QuestionRenderer<A>({
 
   switch (question.type) {
     case "info":
-      return null;
+      // Nothing to answer: a fixed hidden answer lets Continue proceed.
+      return (
+        <QuestionnairePrimitive.Input
+          value="true"
+          readOnly
+          tabIndex={-1}
+          aria-hidden
+          className="sr-only"
+        />
+      );
 
     case "text":
       return (
         <TextInputQuestion
-          id={question.id}
+          id={inputId}
           value={(value as string) ?? ""}
           onChange={onChange}
-          onEnter={isActive ? onEnter : undefined}
-          disabled={!isActive}
+          onSubmit={isActive ? onSubmitText : undefined}
           placeholder={question.placeholder}
           placeholders={question.placeholders}
+          ariaLabel={question.title}
         />
       );
 
     case "number":
       return (
         <TextInputQuestion
-          id={question.id}
+          id={inputId}
+          type="number"
           value={value?.toString() ?? ""}
           onChange={(val) => onChange(val ? parseInt(val, 10) : undefined)}
-          onEnter={isActive ? onEnter : undefined}
-          disabled={!isActive}
-          type="number"
+          onSubmit={isActive ? onSubmitText : undefined}
+          placeholder={question.placeholder}
+          ariaLabel={question.title}
         />
       );
 
     case "radio":
       return (
         <RadioQuestion
-          id={question.id}
-          options={options.map((opt) => ({
-            ...opt,
-            value: String(opt.value),
-          }))}
-          value={(value as string) ?? ""}
+          options={options.map((opt) => ({ ...opt, value: String(opt.value) }))}
+          value={value === undefined || value === null ? "" : String(value)}
           onChange={onChange}
-          onAutoAdvance={isActive ? onEnter : undefined}
-          disabled={!isActive}
+          onAutoAdvance={onAutoAdvance}
           variant={question.variant}
         />
       );
@@ -84,35 +97,24 @@ export function QuestionRenderer<A>({
     case "boolean":
       return (
         <RadioQuestion
-          id={question.id}
-          options={[
-            { value: "true", label: "Yes" },
-            { value: "false", label: "No" },
-          ]}
+          options={options.map((opt) => ({ ...opt, value: String(opt.value) }))}
           value={value === true ? "true" : value === false ? "false" : ""}
           onChange={(val: string) => onChange(val === "true")}
-          onAutoAdvance={isActive ? onEnter : undefined}
-          disabled={!isActive}
+          onAutoAdvance={onAutoAdvance}
         />
       );
 
     case "card-checkbox": {
-      const isSingle = question.cardCheckboxProps?.singleSelection;
+      const single = question.cardCheckboxProps?.singleSelection ?? false;
       return (
         <CardCheckboxQuestion
-          id={question.id}
           options={options as CardOption[]}
-          values={
-            isSingle ? (value ? [value as string] : []) : Array.isArray(value) ? value : []
+          singleSelection={single}
+          values={single ? (value ? [value as string] : []) : Array.isArray(value) ? value : []}
+          onChange={(values: string[]) =>
+            onChange(single ? values[values.length - 1] : values)
           }
-          onChange={(values: string[]) => {
-            if (isSingle) {
-              onChange(values.length > 0 ? values[values.length - 1] : undefined);
-            } else {
-              onChange(values);
-            }
-          }}
-          disabled={!isActive}
+          onAutoAdvance={onAutoAdvance}
         />
       );
     }
@@ -120,11 +122,11 @@ export function QuestionRenderer<A>({
     case "textarea":
       return (
         <TextareaQuestion
-          id={question.id}
+          id={inputId}
           value={(value as string) ?? ""}
           onChange={onChange}
-          disabled={!isActive}
           placeholder={question.placeholder}
+          ariaLabel={question.title}
         />
       );
 
@@ -132,7 +134,7 @@ export function QuestionRenderer<A>({
       const sp = question.sliderProps;
       return (
         <SliderQuestion
-          id={question.id}
+          id={inputId}
           value={value as number | undefined}
           onChange={onChange}
           min={sp?.min}
@@ -140,7 +142,7 @@ export function QuestionRenderer<A>({
           step={sp?.step}
           minLabel={sp?.minLabel}
           maxLabel={sp?.maxLabel}
-          disabled={!isActive}
+          ariaLabel={question.title}
         />
       );
     }
@@ -148,12 +150,10 @@ export function QuestionRenderer<A>({
     case "rating":
       return (
         <RatingQuestion
-          id={question.id}
           value={value as number | undefined}
           onChange={onChange}
           max={question.ratingProps?.max}
-          disabled={!isActive}
-          onAutoAdvance={isActive ? onEnter : undefined}
+          onAutoAdvance={onAutoAdvance}
         />
       );
 

@@ -7,41 +7,101 @@
       "name": "onboarding-kit",
       "type": "registry:block",
       "title": "Onboarding Kit",
-      "description": "A multi-step onboarding flow with conditional logic and validation.",
+      "description": "A multi-step onboarding flow built on shadcn's Questionnaire: questions as data, conditional logic, Zod validation, native form controls.",
       "dependencies": [
-        "framer-motion",
+        "@shadcn/react",
+        "motion",
         "zod"
       ],
       "registryDependencies": [
+        "questionnaire",
+        "alert",
         "button",
-        "card",
         "input",
         "textarea",
         "progress",
-        "slider",
-        "alert"
+        "slider"
       ],
       "categories": [
         "onboarding",
         "data-collection"
       ],
       "files": [
-        { "path": "registry/onboarding-kit/page.tsx", "type": "registry:page", "target": "app/onboarding-kit/page.tsx" },
-        { "path": "registry/onboarding-kit/onboarding-form.tsx", "type": "registry:component", "target": "components/survey/onboarding-form.tsx" },
-        { "path": "registry/onboarding-kit/survey.tsx", "type": "registry:component", "target": "components/survey/survey.tsx" },
-        { "path": "registry/onboarding-kit/survey-shell.tsx", "type": "registry:component", "target": "components/survey/survey-shell.tsx" },
-        { "path": "registry/onboarding-kit/question-renderer.tsx", "type": "registry:component", "target": "components/survey/question-renderer.tsx" },
-        { "path": "registry/onboarding-kit/radio-question.tsx", "type": "registry:component", "target": "components/survey/radio-question.tsx" },
-        { "path": "registry/onboarding-kit/card-checkbox-question.tsx", "type": "registry:component", "target": "components/survey/card-checkbox-question.tsx" },
-        { "path": "registry/onboarding-kit/rating-question.tsx", "type": "registry:component", "target": "components/survey/rating-question.tsx" },
-        { "path": "registry/onboarding-kit/slider-question.tsx", "type": "registry:component", "target": "components/survey/slider-question.tsx" },
-        { "path": "registry/onboarding-kit/text-input-question.tsx", "type": "registry:component", "target": "components/survey/text-input-question.tsx" },
-        { "path": "registry/onboarding-kit/textarea-question.tsx", "type": "registry:component", "target": "components/survey/textarea-question.tsx" },
-        { "path": "registry/onboarding-kit/check-indicator.tsx", "type": "registry:component", "target": "components/survey/check-indicator.tsx" },
-        { "path": "registry/onboarding-kit/survey-types.ts", "type": "registry:component", "target": "components/survey/survey-types.ts" },
-        { "path": "registry/onboarding-kit/survey-config.ts", "type": "registry:component", "target": "components/survey/survey-config.ts" },
-        { "path": "registry/onboarding-kit/use-current-question.ts", "type": "registry:hook", "target": "hooks/use-current-question.ts" },
-        { "path": "registry/onboarding-kit/use-question-options.ts", "type": "registry:hook", "target": "hooks/use-question-options.ts" }
+        {
+          "path": "registry/onboarding-kit/page.tsx",
+          "type": "registry:page",
+          "target": "app/onboarding-kit/page.tsx"
+        },
+        {
+          "path": "registry/onboarding-kit/onboarding-form.tsx",
+          "type": "registry:component",
+          "target": "components/survey/onboarding-form.tsx"
+        },
+        {
+          "path": "registry/onboarding-kit/survey.tsx",
+          "type": "registry:component",
+          "target": "components/survey/survey.tsx"
+        },
+        {
+          "path": "registry/onboarding-kit/survey-shell.tsx",
+          "type": "registry:component",
+          "target": "components/survey/survey-shell.tsx"
+        },
+        {
+          "path": "registry/onboarding-kit/question-renderer.tsx",
+          "type": "registry:component",
+          "target": "components/survey/question-renderer.tsx"
+        },
+        {
+          "path": "registry/onboarding-kit/radio-question.tsx",
+          "type": "registry:component",
+          "target": "components/survey/radio-question.tsx"
+        },
+        {
+          "path": "registry/onboarding-kit/card-checkbox-question.tsx",
+          "type": "registry:component",
+          "target": "components/survey/card-checkbox-question.tsx"
+        },
+        {
+          "path": "registry/onboarding-kit/rating-question.tsx",
+          "type": "registry:component",
+          "target": "components/survey/rating-question.tsx"
+        },
+        {
+          "path": "registry/onboarding-kit/slider-question.tsx",
+          "type": "registry:component",
+          "target": "components/survey/slider-question.tsx"
+        },
+        {
+          "path": "registry/onboarding-kit/text-input-question.tsx",
+          "type": "registry:component",
+          "target": "components/survey/text-input-question.tsx"
+        },
+        {
+          "path": "registry/onboarding-kit/textarea-question.tsx",
+          "type": "registry:component",
+          "target": "components/survey/textarea-question.tsx"
+        },
+        {
+          "path": "registry/onboarding-kit/check-indicator.tsx",
+          "type": "registry:component",
+          "target": "components/survey/check-indicator.tsx"
+        },
+        {
+          "path": "registry/onboarding-kit/survey-types.ts",
+          "type": "registry:component",
+          "target": "components/survey/survey-types.ts"
+        },
+        {
+          "path": "registry/onboarding-kit/survey-config.ts",
+          "type": "registry:component",
+          "target": "components/survey/survey-config.ts"
+        },
+        {
+          "path": "registry/onboarding-kit/use-question-options.ts",
+          "type": "registry:hook",
+          "target": "hooks/use-question-options.ts"
+        }
       ]
     }
   ]

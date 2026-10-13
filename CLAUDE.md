@@ -38,7 +38,7 @@ The `registry/` directory must stay in sync with source files. The built output 
 ## Architecture
 
 - `components/survey/` — the reusable component library (what users install)
-- `hooks/` — custom hooks (use-current-question, use-question-options, use-question-state)
+- `hooks/` — custom hooks (use-question-options); Questionnaire from `@shadcn/react` owns step state
 - `registry/` — source files for shadcn registry build (flat, no subdirectories)
 - `public/r/` — built registry JSON (auto-generated, do not edit manually)
 - `app/` — demo app showcasing all question types

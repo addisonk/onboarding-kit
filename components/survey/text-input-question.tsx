@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useRef } from "react";
 import { ArrowRight } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "motion/react";
+import { Questionnaire as QuestionnairePrimitive } from "@shadcn/react/questionnaire";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -14,10 +15,14 @@ interface TextInputQuestionProps {
   placeholder?: string;
   /** Rotating typewriter placeholders. */
   placeholders?: string[];
+  /** Visible label. Without one, the question title names the input. */
   label?: string;
+  /** Accessible name when there is no visible label. */
+  ariaLabel?: string;
   className?: string;
   type?: "text" | "email" | "number";
-  onEnter?: () => void;
+  /** Called by the inline arrow button. Enter is handled by the questionnaire. */
+  onSubmit?: () => void;
   disabled?: boolean;
   min?: number;
   max?: number;
@@ -30,9 +35,10 @@ export function TextInputQuestion({
   placeholder = "Type your answer...",
   placeholders,
   label,
+  ariaLabel,
   className,
   type = "text",
-  onEnter,
+  onSubmit,
   disabled = false,
   min,
   max,
@@ -96,32 +102,25 @@ export function TextInputQuestion({
   return (
     <div className={cn("w-full", className)}>
       {label && (
-        <label
-          htmlFor={id}
-          className="mb-3 block text-sm text-muted-foreground"
-        >
+        <label htmlFor={id} className="mb-3 block text-sm text-muted-foreground">
           {label}
         </label>
       )}
       <div className="relative">
-        <Input
+        <QuestionnairePrimitive.Input
+          render={<Input />}
           id={id}
           type={type}
           value={safeValue}
           onChange={(e) => onChange(e.target.value)}
           placeholder={displayPlaceholder}
+          aria-label={label ? undefined : ariaLabel}
           className={cn(
             "h-12 text-base",
             hasValue && "pr-12",
             type === "number" &&
               "[appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
           )}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && onEnter && !disabled) {
-              e.preventDefault();
-              onEnter();
-            }
-          }}
           disabled={disabled}
           inputMode={type === "number" ? "numeric" : undefined}
           min={type === "number" && min !== undefined ? min : undefined}
@@ -129,7 +128,7 @@ export function TextInputQuestion({
           autoComplete="off"
         />
         <AnimatePresence initial={false}>
-          {hasValue && (
+          {hasValue && onSubmit && (
             <motion.div
               initial={{ opacity: 0, scale: 0.25, filter: "blur(4px)" }}
               animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
@@ -141,10 +140,11 @@ export function TextInputQuestion({
                 variant="default"
                 size="icon-sm"
                 type="button"
-                onClick={() => onEnter && !disabled && hasValue && onEnter()}
+                onClick={() => !disabled && onSubmit()}
                 disabled={disabled}
                 className="rounded-full"
                 aria-label="Continue to next question"
+                tabIndex={-1}
               >
                 <ArrowRight />
               </Button>

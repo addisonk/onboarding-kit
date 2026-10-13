@@ -1,22 +1,42 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { z } from "zod";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type { FormEvent } from "react";
 import { AlertCircle, ArrowLeft } from "lucide-react";
+import {
+  Questionnaire as QuestionnairePrimitive,
+  type QuestionnaireItemDefinition,
+  type QuestionnaireShortcutMode,
+} from "@shadcn/react/questionnaire";
 import { cn } from "@/lib/utils";
-import { motion, AnimatePresence } from "framer-motion";
-import { SurveyShell, SurveyQuestion } from "./survey-shell";
-import { QuestionRenderer } from "./question-renderer";
-import { useCurrentQuestion } from "@/hooks/use-current-question";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import {
+  Questionnaire,
+  QuestionnaireDescription,
+  QuestionnaireItem,
+  QuestionnaireNext,
+  QuestionnairePrevious,
+  QuestionnaireSkip,
+  QuestionnaireSubmit,
+  QuestionnaireTitle,
+} from "@/components/ui/questionnaire";
+import { SurveyShell } from "./survey-shell";
+import { QuestionRenderer } from "./question-renderer";
+import { AUTO_ADVANCE_CONFIG } from "./survey-config";
+import { resolveQuestionOptions } from "@/hooks/use-question-options";
 import type { QuestionConfig } from "./survey-types";
 
 export interface SurveyProps<A extends Record<string, any>> {
   questions: QuestionConfig<A>[];
+  /** Current answers. The survey is controlled: every change goes through `onAttributeChange`. */
   attributes: A;
   onAttributeChange: (attributes: A) => void;
   onComplete: (attributes: A) => void;
+  /** Question to open first, for resuming a saved draft. Defaults to the first enabled question. */
+  defaultQuestionId?: keyof A & string;
+  /** Keyboard shortcuts for fixed choices: A, B, C… or 1, 2, 3… */
+  shortcuts?: QuestionnaireShortcutMode;
   /** Custom right panel content. Overrides `rightImage`. */
   rightContent?: React.ReactNode;
   /** Shorthand: provide an image URL and it fills the right panel as cover. */
@@ -31,7 +51,45 @@ export interface SurveyProps<A extends Record<string, any>> {
   hideContinueButton?: boolean;
   hideQuestionTitle?: boolean;
   showProgress?: boolean;
+  /** Label for Continue on every question, including the last. */
+  continueLabel?: string;
   className?: string;
+}
+
+const isEnabled = <A,>(question: QuestionConfig<A>, attributes: A) =>
+  !question.condition || question.condition(attributes);
+
+// Info screens are required too: their hidden answer is always present, so Skip never shows.
+const isRequired = <A,>(question: QuestionConfig<A>) => !question.optional;
+
+const sliderMidpoint = <A,>(question: QuestionConfig<A>) => {
+  const min = question.sliderProps?.min ?? 0;
+  const max = question.sliderProps?.max ?? 10;
+  return Math.round((min + max) / 2);
+};
+
+/** Answers a question carries without input: info screens and an untouched slider. */
+function withImplicitAnswer<A extends Record<string, any>>(
+  question: QuestionConfig<A>,
+  attributes: A
+): A {
+  if (question.type === "info" && attributes[question.id] !== true) {
+    return { ...attributes, [question.id]: true };
+  }
+  if (question.type === "slider" && attributes[question.id] === undefined) {
+    return { ...attributes, [question.id]: sliderMidpoint(question) };
+  }
+  return attributes;
+}
+
+function validationMessage<A extends Record<string, any>>(
+  question: QuestionConfig<A>,
+  attributes: A
+): string | null {
+  if (!question.validationSchema) return null;
+  const result = question.validationSchema.safeParse(attributes[question.id]);
+  if (result.success) return null;
+  return question.validationErrorMessage ?? result.error.issues[0]?.message ?? "Invalid input";
 }
 
 export function Survey<A extends Record<string, any>>({
@@ -39,6 +97,8 @@ export function Survey<A extends Record<string, any>>({
   attributes,
   onAttributeChange,
   onComplete,
+  defaultQuestionId,
+  shortcuts,
   rightContent,
   rightImage,
   hideRightPanel = false,
@@ -48,101 +108,104 @@ export function Survey<A extends Record<string, any>>({
   hideContinueButton = false,
   hideQuestionTitle = false,
   showProgress = false,
+  continueLabel = "Continue",
   className,
 }: SurveyProps<A>) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [tempAnswer, setTempAnswer] = useState<any>(null);
-  const [validationError, setValidationError] = useState("");
+  const shellRef = useRef<HTMLDivElement>(null);
+  const advanceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const {
-    filteredQuestions,
-    currentQuestion,
-    currentQuestionIndex,
-    setActiveQuestionId,
-    totalQuestions,
-  } = useCurrentQuestion(questions, attributes);
+  const enabledQuestions = useMemo(
+    () => questions.filter((q) => isEnabled(q, attributes)),
+    [questions, attributes]
+  );
+  const [activeId, setActiveId] = useState<string | undefined>(defaultQuestionId);
+  const [invalid, setInvalid] = useState<{ id: string; message: string } | null>(null);
 
-  useEffect(() => {
-    if (currentQuestion) {
-      const existing = (attributes as any)[currentQuestion.id];
-      if (currentQuestion.type === "info") {
-        setTempAnswer(true);
-      } else if (currentQuestion.type === "slider" && existing === undefined) {
-        const sp = currentQuestion.sliderProps;
-        const min = sp?.min ?? 0;
-        const max = sp?.max ?? 10;
-        setTempAnswer(Math.round((min + max) / 2));
-      } else {
-        setTempAnswer(existing);
+  // A condition can remove the active question; fall back to the first enabled one.
+  const currentId = enabledQuestions.some((q) => q.id === activeId)
+    ? activeId
+    : enabledQuestions[0]?.id;
+  const currentIndex = enabledQuestions.findIndex((q) => q.id === currentId);
+  const currentQuestion = enabledQuestions[currentIndex];
+
+  const items = useMemo<QuestionnaireItemDefinition[]>(
+    () =>
+      questions.map((q) => ({
+        name: q.id,
+        required: isRequired(q),
+        disabled: !isEnabled(q, attributes),
+        choices: resolveQuestionOptions(q, attributes).map((option) => ({
+          value: String(option.value),
+        })),
+      })),
+    [questions, attributes]
+  );
+
+  const cancelAdvance = useCallback(() => {
+    if (advanceTimer.current) clearTimeout(advanceTimer.current);
+    advanceTimer.current = null;
+  }, []);
+
+  useEffect(() => cancelAdvance, [cancelAdvance]);
+  useEffect(() => cancelAdvance(), [currentId, cancelAdvance]);
+
+  /** Moves on through Questionnaire's own Continue button, so its validation still runs. */
+  const advance = useCallback(() => {
+    const action = shellRef.current?.querySelector<HTMLButtonElement>(
+      '[data-survey-action][data-visible]:not(:disabled)'
+    );
+    action?.click();
+  }, []);
+
+  const scheduleAdvance = useCallback(() => {
+    cancelAdvance();
+    advanceTimer.current = setTimeout(advance, AUTO_ADVANCE_CONFIG.TOTAL_DELAY);
+  }, [advance, cancelAdvance]);
+
+  const answer = (question: QuestionConfig<A>, value: unknown) => {
+    setInvalid((current) => (current?.id === question.id ? null : current));
+    onAttributeChange({ ...attributes, [question.id]: value });
+  };
+
+  const handleItemChange = (nextId: string) => {
+    const nextIndex = enabledQuestions.findIndex((q) => q.id === nextId);
+    if (currentQuestion && nextIndex > currentIndex) {
+      const committed = withImplicitAnswer(currentQuestion, attributes);
+      const message = validationMessage(currentQuestion, committed);
+      if (message) {
+        setInvalid({ id: currentQuestion.id, message });
+        return;
       }
-      setValidationError("");
+      if (committed !== attributes) onAttributeChange(committed);
     }
-  }, [currentQuestion, attributes]);
+    setInvalid(null);
+    setActiveId(nextId);
+  };
 
-  const validate = (): boolean => {
-    if (!currentQuestion?.validationSchema) return true;
-    try {
-      currentQuestion.validationSchema.parse(tempAnswer);
-      setValidationError("");
-      return true;
-    } catch (err) {
-      if (err instanceof z.ZodError) {
-        setValidationError(
-          currentQuestion.validationErrorMessage ??
-            err.issues[0]?.message ??
-            "Invalid input"
-        );
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    cancelAdvance();
+    const committed = currentQuestion
+      ? withImplicitAnswer(currentQuestion, attributes)
+      : attributes;
+    for (const question of enabledQuestions) {
+      const message = validationMessage(question, committed);
+      if (message) {
+        setInvalid({ id: question.id, message });
+        setActiveId(question.id);
+        return;
       }
-      return false;
     }
+    onComplete(committed);
   };
 
-  const goToNext = () => {
-    if (!validate()) return;
-    if (currentQuestion) {
-      const next = { ...attributes, [currentQuestion.id]: tempAnswer };
-      onAttributeChange(next);
-    }
-    if (
-      currentQuestionIndex !== -1 &&
-      currentQuestionIndex < filteredQuestions.length - 1
-    ) {
-      const nextQ = filteredQuestions[currentQuestionIndex + 1];
-      if (nextQ) setActiveQuestionId(String(nextQ.id));
-    } else {
-      handleComplete();
-    }
-  };
-
-  const goToPrevious = () => {
-    setValidationError("");
-    if (currentQuestionIndex === 0 && onBackFromFirstQuestion) {
-      onBackFromFirstQuestion();
-    } else if (currentQuestionIndex > 0) {
-      const prevQ = filteredQuestions[currentQuestionIndex - 1];
-      if (prevQ) setActiveQuestionId(String(prevQ.id));
-    }
-  };
-
-  const handleComplete = () => {
-    if (!validate()) return;
-    if (currentQuestion) {
-      onComplete({ ...attributes, [currentQuestion.id]: tempAnswer });
-    } else {
-      onComplete(attributes);
-    }
-  };
-
-  // Resolve right panel: hidden > explicit content > image shorthand > default gradient
+  // Resolve right panel: hidden > explicit content > image shorthand > default placeholder
   const resolvedRightContent = hideRightPanel
     ? undefined
-    : rightContent ?? (rightImage ? (
+    : rightContent ??
+      (rightImage ? (
         <div className="relative h-full w-full overflow-hidden rounded-2xl">
-          <img
-            src={rightImage}
-            alt=""
-            className="size-full object-cover"
-          />
+          <img src={rightImage} alt="" className="size-full object-cover" />
           <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-foreground/5" />
         </div>
       ) : (
@@ -158,86 +221,144 @@ export function Survey<A extends Record<string, any>>({
 
   if (!currentQuestion) return null;
 
-  const showBack = currentQuestionIndex > 0 || !!onBackFromFirstQuestion;
-  const showNext = !hideContinueButton && (currentQuestion.type === "info" || !!tempAnswer);
-  const progressPercent =
-    currentQuestionIndex >= 0 && totalQuestions
-      ? ((currentQuestionIndex + 1) / totalQuestions) * 100
-      : 0;
+  const backClassName = "flex-1 md:size-10 md:flex-none md:px-0";
+  // Continue stays unavailable until the question is answered (or skipped).
+  const continueRender = (
+    props: React.ComponentProps<"button">,
+    state: { status: string | null }
+  ) => <button {...props} disabled={props.disabled || state.status === "unanswered"} />;
+  const continueClassName = cn(
+    "flex-1 md:ms-auto md:flex-none",
+    "md:data-[status=unanswered]:invisible",
+    hideContinueButton && "sr-only"
+  );
 
   return (
-    <SurveyShell
-      className={className}
-      rightContent={resolvedRightContent}
-      logo={logo}
-      logoUrl={logoUrl}
-      showProgress={showProgress}
-      progressPercent={progressPercent}
-      actions={
-        <div className="mx-auto w-full max-w-lg">
-          {/* Desktop */}
-          <div className="hidden items-center justify-between md:flex">
-            <Button variant="outline" size="icon" className={cn("min-h-10 min-w-10", showBack ? "" : "invisible")} onClick={goToPrevious} aria-label="Go back">
-              <ArrowLeft />
-            </Button>
-            <Button size="lg" onClick={goToNext} className={showNext ? "" : "invisible"}>
-              Continue
-            </Button>
-          </div>
-          {/* Mobile */}
-          {!hideContinueButton && (
-            <div className="flex gap-3 md:hidden">
-              {showBack && (
-                <Button variant="outline" size="lg" className="flex-1" onClick={goToPrevious} aria-label="Go back">
-                  <ArrowLeft />
-                  Back
-                </Button>
-              )}
-              <Button size="lg" className="flex-1" onClick={goToNext} disabled={!showNext}>
-                Continue
-              </Button>
-            </div>
-          )}
-        </div>
-      }
+    <Questionnaire
+      item={currentId}
+      items={items}
+      onItemChange={handleItemChange}
+      onSubmit={handleSubmit}
+      shortcuts={shortcuts}
+      className={cn("min-h-full gap-0", className)}
     >
-      <div ref={containerRef} className="mx-auto w-full max-w-lg py-6">
-        {/* Question — fade + subtle slide on transition */}
-        <AnimatePresence mode="wait" initial={false}>
-          <motion.div
-            key={currentQuestion.id}
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -4 }}
-            transition={{ duration: 0.25, ease: [0.2, 0, 0, 1] }}
-          >
-            <SurveyQuestion
-              title={currentQuestion.title}
-              description={currentQuestion.description}
-              active
-              hideQuestionTitle={hideQuestionTitle}
-            >
-              <QuestionRenderer
-                question={currentQuestion}
-                attributes={attributes}
-                isActive
-                onEnter={goToNext}
-                onChange={(value: any) => {
-                  setTempAnswer(value);
-                  setValidationError("");
-                }}
-                value={tempAnswer}
-              />
-              {validationError && (
-                <Alert variant="destructive" className="mt-4">
-                  <AlertCircle />
-                  <AlertDescription>{validationError}</AlertDescription>
-                </Alert>
+      <SurveyShell
+        ref={shellRef}
+        className="flex-1"
+        rightContent={resolvedRightContent}
+        logo={logo}
+        logoUrl={logoUrl}
+        progress={
+          showProgress ? (
+            <QuestionnairePrimitive.Progress
+              render={(props, state) => (
+                <div
+                  {...props}
+                  className="mt-2 h-1.5 w-24 overflow-hidden rounded-full bg-foreground/10"
+                >
+                  <div
+                    className="h-full rounded-full bg-primary transition-[width] duration-300"
+                    style={{ width: `${state.total ? (state.current / state.total) * 100 : 0}%` }}
+                  />
+                </div>
               )}
-            </SurveyQuestion>
-          </motion.div>
-        </AnimatePresence>
-      </div>
-    </SurveyShell>
+            />
+          ) : undefined
+        }
+        actions={
+          <div className="mx-auto flex w-full max-w-lg items-center gap-3">
+            {currentIndex === 0 && onBackFromFirstQuestion && (
+              <Button
+                type="button"
+                variant="outline"
+                size="lg"
+                className={backClassName}
+                onClick={onBackFromFirstQuestion}
+              >
+                <ArrowLeft />
+                <span className="md:sr-only">Back</span>
+              </Button>
+            )}
+            <QuestionnairePrevious variant="outline" size="lg" className={backClassName}>
+              <ArrowLeft />
+              <span className="md:sr-only">Back</span>
+            </QuestionnairePrevious>
+            <QuestionnaireSkip variant="ghost" size="lg" className="md:ms-auto">
+              Skip
+            </QuestionnaireSkip>
+            <QuestionnaireNext
+              data-survey-action="next"
+              size="lg"
+              className={continueClassName}
+              render={continueRender}
+            >
+              {continueLabel}
+            </QuestionnaireNext>
+            <QuestionnaireSubmit
+              data-survey-action="submit"
+              size="lg"
+              className={continueClassName}
+              render={continueRender}
+            >
+              {continueLabel}
+            </QuestionnaireSubmit>
+          </div>
+        }
+      >
+        <div className="mx-auto w-full max-w-lg py-6">
+          {questions.map((question) => {
+            const active = question.id === currentId;
+            return (
+              <QuestionnaireItem
+                key={question.id}
+                name={question.id}
+                required={isRequired(question)}
+                disabled={!isEnabled(question, attributes)}
+                multiple={
+                  question.type === "card-checkbox" &&
+                  !question.cardCheckboxProps?.singleSelection
+                }
+                invalid={invalid?.id === question.id}
+                className="gap-0 data-active:animate-in data-active:fade-in-0 data-active:slide-in-from-bottom-2 data-active:duration-300"
+              >
+                <QuestionnaireTitle
+                  className={cn(
+                    "mb-0 max-w-lg font-heading text-2xl font-semibold tracking-tight text-foreground md:text-3xl",
+                    !question.description && "mb-6",
+                    hideQuestionTitle && "sr-only"
+                  )}
+                >
+                  {question.title}
+                </QuestionnaireTitle>
+                {question.description && (
+                  <QuestionnaireDescription className="mt-3 mb-6 max-w-lg text-base leading-relaxed">
+                    {question.description}
+                  </QuestionnaireDescription>
+                )}
+                <QuestionRenderer
+                  question={question}
+                  attributes={attributes}
+                  isActive={active}
+                  value={attributes[question.id]}
+                  onChange={(value) => answer(question, value)}
+                  onAutoAdvance={active ? scheduleAdvance : undefined}
+                  onSubmitText={advance}
+                />
+                <QuestionnairePrimitive.Error
+                  render={<Alert variant="destructive" className="mt-4" />}
+                >
+                  <AlertCircle />
+                  <AlertDescription>
+                    {invalid?.id === question.id
+                      ? invalid.message
+                      : "Answer this question to continue."}
+                  </AlertDescription>
+                </QuestionnairePrimitive.Error>
+              </QuestionnaireItem>
+            );
+          })}
+        </div>
+      </SurveyShell>
+    </Questionnaire>
   );
 }
